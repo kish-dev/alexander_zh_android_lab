@@ -1,29 +1,21 @@
 # Workshop Clean+MVVM+Jetpack
 ## 1. Инициализация проекта - 10 мин
-Требование к проекту:
- - Kotlin версии 1.6.20
- - Android Gradle Plugin версии 7.1.3
- - Готовый эмулятор Android 10
 
 Клонируем проект с помощью команды:
 > git clone https://github.com/kish-dev/kate_android_lab
 
 В проекте имеется папочка sources там необходимые файлики и модельки
 
-После того как проект затащили нужно будет его скомпилировать и запустить на эмуляторе.
+После того как проект затащила нужно будет его скомпилировать и запустить на эмуляторе.
 
-## 2. Q&A - 5 мин
-
-## 3. Data слой - 10 мин
+## 2. Data слой - 10 мин
 Давай создадим папочку *data* на одном уровне с папкой *source*. В папке *data* нужно будет создать две папки:
 - *dto* (Для хранение объектов, которыми обмениваются бэкенд и приложение. Там могут быть и объекты для хранения в базу данных.)
 - *repositoriesImpl* (Для реализации репозитория интерфейс которого будет лежать в слое domain)
 
-Перетащите файл `ProductInListDTO` в папку dto из папки sources, а файл `mock.kt` в *repositoryImpl*.
+Перетащи файл `ProductInListDTO` в папку dto из папки sources, а файл `mock.kt` в *repositoryImpl*.
 
-## 4. Q&A - 5 мин
-
-## 5. Domain слой - 20 мин
+## 3. Domain слой - 20 мин
 Создадим папочку *domain* на одном уровне с папкой *data*. В папке *domain* нужно будет создать две папки:
 - *repositories* (для хранения интерфейсов repository имплементация которых лежит в слое data)
 - *interactors* (для хранение интерфейса и реализации интеракторов, которые будут передавать данные из domain слоя в data слой)
@@ -45,13 +37,13 @@
 > fun getProductById(guid: String): ProductInListVO
 
 Теперь создадим папочку *di* на уровне папки *data* и переместим *sources/ServiceLocator* в созданную папку. После перемещения нужно будет зайти в `ServiceLocator` и раскоментировать все.
-Поправьте все конфликты и запустите проект.
+Поправь все конфликты и запусти проект.
 
 > P.S. Так как мы еще не прошли тему по Dependencies Injection, поэтому используем ServiceLocator. 
 
-> Подробнее можете почитать [тут](http://sergeyteplyakov.blogspot.com/2013/03/di-service-locator.html), [тут](https://habr.com/ru/post/465395/) и [тут](https://javatutor.net/articles/j2ee-pattern-service-locator).
+> Подробнее можешь почитать [тут](http://sergeyteplyakov.blogspot.com/2013/03/di-service-locator.html), [тут](https://habr.com/ru/post/465395/) и [тут](https://javatutor.net/articles/j2ee-pattern-service-locator).
 
-## 6. Presentation слой - 5 мин
+## 4. Presentation слой - 5 мин
 Так как этот слой по больше, разделим его на несколько частей. Перед тем как мы начнем реализовывать экраны, нужно соверщить следующие действия:
 1. Создадим папку presentation на одном уровне с папкой *data* и внутри создадим еще папки:
     1. view
@@ -60,8 +52,8 @@
 2. Нужно будет переместить файл `ViewModelFactory.kt` в созданную папку *viewModel*.
 3. Переместите файл `ProductInListVO.kt` в папку *viewObject*.
 
-### 6.1. Экран со списком заказов - 30 мин
-В `activity_main.xml` уже лежит `FragmentContainerView`, подребнее можно почитать [тут](https://developer.android.com/reference/androidx/fragment/app/FragmentContainerView).
+### 5.1. Экран со списком заказов - 30 мин
+В `activity_main.xml` уже лежит `FragmentContainerView`, подробнее можно почитать [тут](https://developer.android.com/reference/androidx/fragment/app/FragmentContainerView).
 - Создадим фрагмент `ProductsFragment` в папке *view*
 - Добавляем аттрибут `android:name` в `FragmentContainerView`, который находится в `activity_main.xml`, и указываем в нём наш фрагмент `ProductsFragment`, 
   чтобы по умолчанию в `FragmentContainerView` добавлялся наш созданный фрагмент.
@@ -81,13 +73,10 @@
 - В методе `onViewCreated` нашего фрагмента нужно будет подписаться на `productLD` и заполнить полученными данными наш RecyclerView.
 - Компилирем проект и запускаем, у нас должен получится экран со списком заказов.
 
-### 6.2. Q&A - 10 мин
-
-### 6.3. Экран с подробной информацией о заказе - 30 мин
-- Созадаем обычный Fragment, назовем его `PDPFragment`, он должен получать аргумент (`productId`, т.е. Id товара) из `bundle`. 
+### 5.2. Экран с подробной информацией о заказе - 30 мин
+- Создай обычный Fragment, назови его `PDPFragment`, он должен получать аргумент (`productId`, т.е. Id товара) из `bundle`. 
   Ui у фрагмента уже имеется в `pdp_fragment.xml`.
 - Нужно будет открыть этот фрагмент при нажатии на товар в `ProductsFragment`, передав `Id` товара.
 - Теперь нужно будет создать для нашего фрагмента `ViewModel` и достать по `Id` товара информацию о товаре. Мы уже ранее это делали в предыдушем этапе.
 - А теперь нужно будет забиндить полученные данные о товаре, чтобы отобразилось на экране.
 - Компилируем проект и проверяем, что все работает и все отображается по нашему экрану.
-- 
