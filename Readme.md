@@ -1,4 +1,4 @@
-# Workshop Clean+MVVM+Jetpack
+# Clean+MVVM+Jetpack
 ## 1. Инициализация проекта - 10 мин
 
 Клонируем проект с помощью команды:
