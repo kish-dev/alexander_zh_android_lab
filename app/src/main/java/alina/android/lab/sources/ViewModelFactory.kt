@@ -1,4 +1,4 @@
-package kate.android.lab.sources
+package alina.android.lab.sources
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels

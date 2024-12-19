@@ -2,7 +2,7 @@
 ## 1. Инициализация проекта - 10 мин
 
 Клонируем проект с помощью команды:
-> git clone https://github.com/kish-dev/kate_android_lab
+> git clone https://github.com/kish-dev/alina_android_lab
 
 В проекте имеется папочка sources там необходимые файлики и модельки
 

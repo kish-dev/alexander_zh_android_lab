@@ -1,4 +1,4 @@
-package kate.android.lab.sources
+package alina.android.lab.sources
 
 data class ProductInListVO(
     val guid: String,

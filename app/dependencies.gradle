@@ -1,6 +1,6 @@
 ext {
     general = [
-            applicationId: "kate.android.lav"
+            applicationId: "alina.android.lav"
     ]
 
     versions = [
