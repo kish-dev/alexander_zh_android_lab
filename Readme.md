@@ -2,11 +2,11 @@
 ## 1. Инициализация проекта - 10 мин
 
 Клонируем проект с помощью команды:
-> git clone https://github.com/kish-dev/alina_android_lab
+> git clone https://github.com/kish-dev/rinat_android_lab
 
 В проекте имеется папочка sources там необходимые файлики и модельки
 
-После того как проект затащила нужно будет его скомпилировать и запустить на эмуляторе.
+После того как проект затащил нужно будет его скомпилировать и запустить на эмуляторе.
 
 ## 2. Data слой - 10 мин
 Давай создадим папочку *data* на одном уровне с папкой *source*. В папке *data* нужно будет создать две папки:
@@ -20,7 +20,7 @@
 - *repositories* (для хранения интерфейсов repository имплементация которых лежит в слое data)
 - *interactors* (для хранение интерфейса и реализации интеракторов, которые будут передавать данные из domain слоя в data слой)
 
-Нужно будет создать интерфейс ProductsRepository в папке *repositories* с тремя методами:
+Нужно будет создать интерфейс ProductsRepository в папке *repositories* с двумя методами:
 > fun getProducts(): List<ProductInListVO>
 
 > fun getProductById(guid: String): ProductInListVO

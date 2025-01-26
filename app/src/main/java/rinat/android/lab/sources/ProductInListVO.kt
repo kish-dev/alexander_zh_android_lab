@@ -1,6 +1,6 @@
-package alina.android.lab.sources
+package rinat.android.lab.sources
 
-data class ProductInListDTO(
+data class ProductInListVO(
     val guid: String,
     val image: String,
     val name: String,

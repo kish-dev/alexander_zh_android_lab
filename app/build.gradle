@@ -11,7 +11,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "alina.android.lab"
+        applicationId "rinat.android.lab"
         minSdk 24
         targetSdk 35
         versionCode 1

@@ -1,4 +1,4 @@
-package alina.android.lab
+package rinat.android.lab
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

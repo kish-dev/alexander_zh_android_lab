@@ -1,4 +1,4 @@
-package alina.android.lab.sources
+package rinat.android.lab.sources
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels

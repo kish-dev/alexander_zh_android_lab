@@ -1,4 +1,4 @@
-package alina.android.lab.sources
+package rinat.android.lab.sources
 
 val productInListDTOs = listOf(
     ProductInListDTO(
