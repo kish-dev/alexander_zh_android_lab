@@ -1,9 +1,9 @@
-package rinat.android.lab.sources
+package valentin.android.lab.sources
 
 /*
-import rinat.android.lab.data.repositories.MockProductsRepository
-import rinat.android.lab.domain.interactors.ProductsInteractor
-import rinat.android.lab.domain.interactors.ProductsInteractorImpl
+import valentin.android.lab.data.repositories.MockProductsRepository
+import valentin.android.lab.domain.interactors.ProductsInteractor
+import valentin.android.lab.domain.interactors.ProductsInteractorImpl
 
  // Подробнее почитать [тут](http://sergeyteplyakov.blogspot.com/2013/03/di-service-locator.html),
  // [тут](https://habr.com/ru/post/465395/) и [тут](https://javatutor.net/articles/j2ee-pattern-service-locator).
