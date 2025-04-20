@@ -1,4 +1,4 @@
-package alex.android.lab.sources
+package alex.android.lab.data.dto
 
 data class ProductInListDTO(
     val guid: String,

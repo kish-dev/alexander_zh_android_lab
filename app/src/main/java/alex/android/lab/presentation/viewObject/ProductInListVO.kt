@@ -1,4 +1,4 @@
-package alex.android.lab.sources
+package alex.android.lab.presentation.viewObject
 
 data class ProductInListVO(
     val guid: String,
