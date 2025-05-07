@@ -12,6 +12,9 @@ object ProductListMapper {
             price = products.price,
             rating = products.rating,
             isFavorite = products.isFavorite,
-            isInCart = products.isInCart)
+            isInCart = products.isInCart,
+            viewCount = products.viewCount
+
+        )
     }
 }

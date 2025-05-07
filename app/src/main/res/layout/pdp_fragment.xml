@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#878787">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/productIV"
@@ -51,5 +52,49 @@
         android:rating="3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/priceTV" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_like"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="26dp"
+        android:layout_height="29dp"
+        android:drawableStart="@drawable/ic_heart_outline"
+        android:drawablePadding="4dp"
+        android:drawableTint="@color/black_overlay"
+        android:gravity="center"
+        android:padding="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.042"
+        app:layout_constraintStart_toEndOf="@+id/ratingView"
+        app:layout_constraintTop_toBottomOf="@+id/priceTV"
+        app:layout_constraintVertical_bias="0.025" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView"
+        android:layout_width="26dp"
+        android:layout_height="23dp"
+        android:src="@drawable/ic_eye"
+        android:tint="@color/black_overlay"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.441"
+        app:layout_constraintStart_toEndOf="@+id/btn_like"
+        app:layout_constraintTop_toBottomOf="@+id/priceTV"
+        app:layout_constraintVertical_bias="0.025" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_view_count"
+        android:layout_width="49dp"
+        android:layout_height="23dp"
+        android:text="0"
+        android:textColor="#66000000"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.903"
+        app:layout_constraintStart_toEndOf="@+id/ratingView"
+        app:layout_constraintTop_toBottomOf="@+id/priceTV"
+        app:layout_constraintVertical_bias="0.025" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
