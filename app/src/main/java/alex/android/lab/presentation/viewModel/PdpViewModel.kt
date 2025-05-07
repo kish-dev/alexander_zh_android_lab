@@ -1,12 +1,13 @@
 package alex.android.lab.presentation.viewModel
 
-import alex.android.lab.domain.exception.DomainException
 import alex.android.lab.domain.interactors.ProductsInteractor
 import alex.android.lab.presentation.viewObject.ProductInListVO
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PdpViewModel(
     private val interactor: ProductsInteractor
@@ -15,11 +16,16 @@ class PdpViewModel(
     val productLD: LiveData<ProductInListVO> = _productLD
 
     fun loadProduct(guid: String) {
-        try {
-            _productLD.value = interactor.getProductById(guid)
-        }catch (e: DomainException) {
-            Log.e("error", "Exception caught: ${e.message}")
+        viewModelScope.launch(Dispatchers.IO) {
+            interactor.incrementViewCount(guid)
+            _productLD.postValue(interactor.getProductById(guid))
         }
+    }
 
+    fun toggleFavorite(productId: String, isFavorite: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            interactor.toggleFavorite(productId, isFavorite)
+            loadProduct(productId)
+        }
     }
 }
