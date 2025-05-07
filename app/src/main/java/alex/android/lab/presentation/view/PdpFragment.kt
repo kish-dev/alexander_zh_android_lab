@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PDPFragment : Fragment() {
+class PdpFragment : Fragment() {
     private var _binding: PdpFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -32,7 +32,7 @@ class PDPFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val productId = arguments?.let {
-            PDPFragmentArgs.fromBundle(it).id
+            PdpFragmentArgs.fromBundle(it).id
         }
         vm.loadProduct(productId.toString())
 

@@ -50,7 +50,7 @@
 
     <fragment
         android:id="@+id/PDPFragment"
-        android:name="alex.android.lab.presentation.view.PDPFragment"
+        android:name="alex.android.lab.presentation.view.PdpFragment"
         android:label="PDPFragment" >
         <argument
             android:name="id"
