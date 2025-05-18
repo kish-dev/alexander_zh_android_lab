@@ -1,18 +1,19 @@
 package alex.android.lab.domain.interactors
 
-import alex.android.lab.domain.UiStates.ApiResult
+import alex.android.lab.presentation.UiStates.UIStates
+import alex.android.lab.presentation.UiStates.UIStatesMapper
+import alex.android.lab.domain.dto.ProductInListDomainDTO
 import alex.android.lab.domain.repositories.ProductsRepository
-import alex.android.lab.presentation.viewObject.ProductInListVO
 
 class ProductsInteractorImpl(
     private val productsRepository: ProductsRepository
 ): ProductsInteractor{
 
-    override suspend fun getProducts(): ApiResult<List<ProductInListVO>> {
-        return productsRepository.getProducts()
+    override suspend fun getProducts(): UIStates<List<ProductInListDomainDTO>> {
+        return productsRepository.getProducts().let { UIStatesMapper.toUIStates(it) }
     }
 
-    override suspend fun getProductById(guid: String): ProductInListVO {
+    override suspend fun getProductById(guid: String): ProductInListDomainDTO {
         return productsRepository.getProductById(guid)
     }
 
@@ -20,8 +21,8 @@ class ProductsInteractorImpl(
         productsRepository.toggleFavorite(productId, favorite)
     }
 
-    override suspend fun getProductsDB(): ApiResult<List<ProductInListVO>> {
-        return productsRepository.getProductsDB()
+    override suspend fun getProductsDB(): UIStates<List<ProductInListDomainDTO>> {
+        return productsRepository.getProductsDB().let { UIStatesMapper.toUIStates(it) }
     }
     override suspend fun incrementViewCount(guid: String) {
         productsRepository.incrementViewCount(guid)

@@ -1,9 +1,10 @@
 package alex.android.lab.presentation.view
 
 import alex.android.lab.databinding.FragmentProductsBinding
-import alex.android.lab.domain.UiStates.ApiResult
+import alex.android.lab.presentation.UiStates.UIStates
 import alex.android.lab.presentation.viewModel.ProductsViewModel
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,13 +31,6 @@ class ProductsFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val products = arguments?.let { bundle ->
-            val args =  ProductsFragmentArgs.fromBundle(bundle)
-            args.products?.toList()?: emptyList()
-        }?: emptyList()
-        vm.setInitialData(products)
-
-
         val adapter = ProductsAdapter (
             onItemClick = { productId ->
                 openPdpFragment(productId)
@@ -46,24 +40,42 @@ class ProductsFragment(
             }
         )
 
-
         binding.productsRecyclerView.adapter = adapter
 
         vm.productsLD.observe(viewLifecycleOwner) { products ->
             when (products) {
-                is ApiResult.Success -> {
+                is UIStates.Loading -> {
+                    binding.errorFrameLayout.visibility = View.GONE
+                    binding.loadingFrameLayout.visibility = View.VISIBLE
+                    vm.loadProducts()
+                }
+                is UIStates.Success -> {
+                    binding.errorFrameLayout.visibility = View.GONE
+                    binding.loadingFrameLayout.visibility = View.GONE
                     adapter.submitList(products.data)
                 }
-                is ApiResult.Error -> {
-                    val action = ProductsFragmentDirections.actionProductsFragmentToErrorPageFragment2(
-                        error = products.error
-                    )
-                    findNavController().navigate(action)
+                is UIStates.Error -> {
+                    binding.loadingFrameLayout.visibility = View.GONE
+                    binding.errorFrameLayout.visibility = View.VISIBLE
+                    vm.setError(products.error)
                 }
             }
         }
 
-        vm.loadProducts()
+        binding.reloadButton.setOnClickListener {
+            binding.errorFrameLayout.visibility = View.GONE
+            binding.loadingFrameLayout.visibility = View.VISIBLE
+            vm.loadProducts()
+        }
+
+        vm.errorLD.observe(viewLifecycleOwner) { error ->
+            binding.ErrorTypeTextView.text = error
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.loadProductsDB()
     }
 
     private fun openPdpFragment(productId: String) {

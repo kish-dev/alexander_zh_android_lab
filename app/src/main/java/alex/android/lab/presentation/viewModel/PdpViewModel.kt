@@ -1,12 +1,14 @@
 package alex.android.lab.presentation.viewModel
 
 import alex.android.lab.domain.interactors.ProductsInteractor
+import alex.android.lab.presentation.mappers.ProductListMapper
 import alex.android.lab.presentation.viewObject.ProductInListVO
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class PdpViewModel(
@@ -18,8 +20,9 @@ class PdpViewModel(
     fun loadProduct(guid: String) {
         viewModelScope.launch(Dispatchers.IO) {
             interactor.incrementViewCount(guid)
-            _productLD.postValue(interactor.getProductById(guid))
+            _productLD.postValue(interactor.getProductById(guid).let { ProductListMapper.toVO(it) })
         }
+
     }
 
     fun toggleFavorite(productId: String, isFavorite: Boolean) {

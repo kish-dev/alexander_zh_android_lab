@@ -3,20 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loadingFragment">
-
-    <fragment
-        android:id="@+id/loadingFragment"
-        android:name="alex.android.lab.presentation.view.LoadingFragment"
-        android:label="fragment_loading"
-        tools:layout="@layout/fragment_loading" >
-        <action
-            android:id="@+id/action_loadingFragment_to_productsFragment"
-            app:destination="@id/productsFragment" />
-        <action
-            android:id="@+id/action_loadingFragment_to_errorPageFragment"
-            app:destination="@id/errorPageFragment" />
-    </fragment>
+    app:startDestination="@id/productsFragment">
 
     <fragment
         android:id="@+id/productsFragment"
@@ -28,24 +15,8 @@
             app:argType="alex.android.lab.presentation.viewObject.ProductInListVO[]"
             app:nullable="true" />
         <action
-            android:id="@+id/action_productsFragment_to_errorPageFragment2"
-            app:destination="@id/errorPageFragment" />
-        <action
             android:id="@+id/action_productsFragment_to_PDPFragment"
             app:destination="@id/PDPFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/errorPageFragment"
-        android:name="alex.android.lab.presentation.view.ErrorPageFragment"
-        android:label="fragment_error_page"
-        tools:layout="@layout/fragment_error_page" >
-        <action
-            android:id="@+id/action_errorPageFragment_to_loadingFragment2"
-            app:destination="@id/loadingFragment" />
-        <argument
-            android:name="error"
-            app:argType="string" />
     </fragment>
 
     <fragment

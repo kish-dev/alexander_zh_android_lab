@@ -1,14 +1,15 @@
 package alex.android.lab.data.DataSource.RemoteDataSource
 
+import alex.android.lab.domain.ApiResult.ApiResult
 import alex.android.lab.data.DataSource.RemoteDataSource.RetrofitClient.ProductsApiService
 import alex.android.lab.data.dto.ProductInListDTO
-import alex.android.lab.domain.UiStates.ApiResult
+import alex.android.lab.presentation.UiStates.UIStates
 import java.io.IOException
 
 class RemoteDataSource(
    private val api: ProductsApiService
 ) {
-    suspend fun getProducts(): ApiResult<List<ProductInListDTO>>? {
+    suspend fun getProducts(): ApiResult<List<ProductInListDTO>> {
         return try {
             val response = api.getProducts()
             if (response.isSuccessful) {
@@ -16,11 +17,11 @@ class RemoteDataSource(
                 if (products != null) {
                     ApiResult.Success(products)
                 } else {
-                    ApiResult.Error("Products not found", response.code())
+                    ApiResult.Error("No products")
                 }
             } else {
                 val errorMsg = response.errorBody()?.string() ?: "No error message"
-                ApiResult.Error(errorMsg, response.code())
+                ApiResult.Error(errorMsg)
             }
         } catch (e: Exception) {
             ApiResult.Error(e.message.toString())
