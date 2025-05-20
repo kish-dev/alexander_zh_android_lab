@@ -1,11 +1,10 @@
 package alex.android.lab.presentation.mappers
 
-import alex.android.lab.data.dto.ProductInListDTO
+import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.domain.dto.ProductInListDomainDTO
-import alex.android.lab.presentation.UiStates.UIStates
 import alex.android.lab.presentation.viewObject.ProductInListVO
 
-object ProductListMapper {
+class ProductListMapper {
     fun toVO(products: ProductInListDomainDTO) : ProductInListVO {
         return ProductInListVO(
             guid = products.guid,
@@ -26,7 +25,7 @@ object ProductListMapper {
             }
             is UIStates.Success -> {
                 return UIStates.Success(
-                    products.data.map { ProductListMapper.toVO(it) })
+                    products.data.map { toVO(it) })
             }
             is UIStates.Error -> {
                 return UIStates.Error(products.error)

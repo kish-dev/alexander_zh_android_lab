@@ -2,7 +2,6 @@ package alex.android.lab.data.DataSource.LocalDataSource.mappers
 
 import alex.android.lab.data.DataSource.LocalDataSource.ProductInListEntity
 import alex.android.lab.domain.dto.ProductInListDomainDTO
-import alex.android.lab.presentation.viewObject.ProductInListVO
 
 object EntityMapper {
     fun toDbEntity(product: ProductInListDomainDTO): ProductInListEntity {

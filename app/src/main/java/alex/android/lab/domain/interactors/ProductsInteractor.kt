@@ -1,6 +1,6 @@
 package alex.android.lab.domain.interactors
 
-import alex.android.lab.presentation.UiStates.UIStates
+import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.domain.dto.ProductInListDomainDTO
 
 interface ProductsInteractor {

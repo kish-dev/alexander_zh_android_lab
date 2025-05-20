@@ -8,26 +8,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class PdpViewModel(
-    private val interactor: ProductsInteractor
+    private val productsInteractor: ProductsInteractor,
+    private val productListMapper: ProductListMapper
 ) : ViewModel() {
     private val _productLD = MutableLiveData<ProductInListVO>()
     val productLD: LiveData<ProductInListVO> = _productLD
 
     fun loadProduct(guid: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.incrementViewCount(guid)
-            _productLD.postValue(interactor.getProductById(guid).let { ProductListMapper.toVO(it) })
+            productsInteractor.incrementViewCount(guid)
+            _productLD.postValue(productsInteractor.getProductById(guid).let { productListMapper.toVO(it) })
         }
 
     }
 
     fun toggleFavorite(productId: String, isFavorite: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.toggleFavorite(productId, isFavorite)
+            productsInteractor.toggleFavorite(productId, isFavorite)
             loadProduct(productId)
         }
     }

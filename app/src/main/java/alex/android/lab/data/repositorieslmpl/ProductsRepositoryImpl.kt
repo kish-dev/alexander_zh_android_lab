@@ -1,11 +1,10 @@
 package alex.android.lab.data.repositorieslmpl
 
-import alex.android.lab.domain.ApiResult.ApiResult
 import alex.android.lab.data.DataSource.LocalDataSource.Dao
 import alex.android.lab.data.DataSource.LocalDataSource.mappers.EntityMapper
 import alex.android.lab.data.DataSource.RemoteDataSource.RemoteDataSource
 import alex.android.lab.data.mappers.ProductListMapper
-import alex.android.lab.presentation.UiStates.UIStates
+import alex.android.lab.domain.ApiResult.ApiResult
 import alex.android.lab.domain.dto.ProductInListDomainDTO
 import alex.android.lab.domain.repositories.ProductsRepository
 import org.koin.core.component.KoinComponent

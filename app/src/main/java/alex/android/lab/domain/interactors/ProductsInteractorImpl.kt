@@ -1,16 +1,17 @@
 package alex.android.lab.domain.interactors
 
-import alex.android.lab.presentation.UiStates.UIStates
-import alex.android.lab.presentation.UiStates.UIStatesMapper
+import alex.android.lab.domain.UiStates.UIStates
+import alex.android.lab.domain.UiStates.UIStatesMapper.UIStatesMapper
 import alex.android.lab.domain.dto.ProductInListDomainDTO
 import alex.android.lab.domain.repositories.ProductsRepository
 
 class ProductsInteractorImpl(
-    private val productsRepository: ProductsRepository
+    private val productsRepository: ProductsRepository,
+    private val uiStatesMapper: UIStatesMapper
 ): ProductsInteractor{
 
     override suspend fun getProducts(): UIStates<List<ProductInListDomainDTO>> {
-        return productsRepository.getProducts().let { UIStatesMapper.toUIStates(it) }
+        return productsRepository.getProducts().let { uiStatesMapper.toUIStates(it) }
     }
 
     override suspend fun getProductById(guid: String): ProductInListDomainDTO {
@@ -22,7 +23,7 @@ class ProductsInteractorImpl(
     }
 
     override suspend fun getProductsDB(): UIStates<List<ProductInListDomainDTO>> {
-        return productsRepository.getProductsDB().let { UIStatesMapper.toUIStates(it) }
+        return productsRepository.getProductsDB().let { uiStatesMapper.toUIStates(it) }
     }
     override suspend fun incrementViewCount(guid: String) {
         productsRepository.incrementViewCount(guid)

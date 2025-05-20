@@ -1,10 +1,9 @@
 package alex.android.lab.presentation.view
 
 import alex.android.lab.databinding.FragmentProductsBinding
-import alex.android.lab.presentation.UiStates.UIStates
+import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.presentation.viewModel.ProductsViewModel
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

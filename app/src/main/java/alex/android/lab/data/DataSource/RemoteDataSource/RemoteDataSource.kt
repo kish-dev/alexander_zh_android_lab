@@ -1,9 +1,8 @@
 package alex.android.lab.data.DataSource.RemoteDataSource
 
-import alex.android.lab.domain.ApiResult.ApiResult
 import alex.android.lab.data.DataSource.RemoteDataSource.RetrofitClient.ProductsApiService
 import alex.android.lab.data.dto.ProductInListDTO
-import alex.android.lab.presentation.UiStates.UIStates
+import alex.android.lab.domain.ApiResult.ApiResult
 import java.io.IOException
 
 class RemoteDataSource(

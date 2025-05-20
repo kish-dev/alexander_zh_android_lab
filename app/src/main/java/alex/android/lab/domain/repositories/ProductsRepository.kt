@@ -1,7 +1,6 @@
 package alex.android.lab.domain.repositories
 
 import alex.android.lab.domain.ApiResult.ApiResult
-import alex.android.lab.presentation.UiStates.UIStates
 import alex.android.lab.domain.dto.ProductInListDomainDTO
 
 interface ProductsRepository {
