@@ -1,6 +1,6 @@
-package alex.android.lab.data.dto
+package alex.android.lab.domain.dto
 
-data class ProductInListDTO(
+data class ProductInListDomainDTO (
     val guid: String,
     val image: String,
     val name: String,

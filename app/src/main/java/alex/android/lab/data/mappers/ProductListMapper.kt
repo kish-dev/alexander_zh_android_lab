@@ -1,17 +1,20 @@
 package alex.android.lab.data.mappers
 
 import alex.android.lab.data.dto.ProductInListDTO
-import alex.android.lab.presentation.viewObject.ProductInListVO
+import alex.android.lab.domain.dto.ProductInListDomainDTO
 
 object ProductListMapper {
-    fun toVO(products: ProductInListDTO) : ProductInListVO {
-        return ProductInListVO(
+    fun toDomainDTO(products: ProductInListDTO) : ProductInListDomainDTO {
+        return ProductInListDomainDTO(
             guid = products.guid,
             image = products.image,
             name = products.name,
             price = products.price,
             rating = products.rating,
             isFavorite = products.isFavorite,
-            isInCart = products.isInCart)
+            isInCart = products.isInCart,
+            viewCount = products.viewCount
+
+        )
     }
 }

@@ -6,6 +6,6 @@ import org.koin.dsl.module
 
 val domainModule = module {
     factory<ProductsInteractor> {
-        ProductsInteractorImpl(productsRepository = get())
+        ProductsInteractorImpl(productsRepository = get(), uiStatesMapper = get())
     }
 }
