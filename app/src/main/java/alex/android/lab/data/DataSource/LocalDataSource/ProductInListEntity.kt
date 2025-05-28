@@ -14,7 +14,8 @@ data class ProductInListEntity (
     @ColumnInfo(name = "rating") var rating: Double,
     @ColumnInfo(name = "isFavorite") var isFavorite: Boolean,
     @ColumnInfo(name = "isInCart") var isInCart: Boolean,
-    @ColumnInfo(name = "viewCount") var viewCount: Int = 0
+    @ColumnInfo(name = "viewCount") var viewCount: Int = 0,
+    //@ColumnInfo(name = "inCartCount") var inCartCount: Int = 0
 )
 
 

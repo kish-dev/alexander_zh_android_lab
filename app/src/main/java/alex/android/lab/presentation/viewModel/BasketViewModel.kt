@@ -1,7 +1,6 @@
 package alex.android.lab.presentation.viewModel
 
 import alex.android.lab.domain.UiStates.UIStates
-import alex.android.lab.domain.dto.ProductInListDomainDTO
 import alex.android.lab.domain.interactors.ProductsInteractor
 import alex.android.lab.presentation.mappers.ProductListMapper
 import alex.android.lab.presentation.viewObject.ProductInListVO
@@ -10,13 +9,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ProductsViewModel(
+class BasketViewModel(
     private val productsInteractor: ProductsInteractor,
     private val productListMapper: ProductListMapper
-) : ViewModel() {
+): ViewModel() {
 
     private val _productsLD = MutableLiveData<UIStates<List<ProductInListVO>>>()
     val productsLD: LiveData<UIStates<List<ProductInListVO>>> = _productsLD
@@ -26,18 +24,8 @@ class ProductsViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _productsLD.postValue(UIStates.Loading())
-           // _productsLD.postValue(ProductListMapper.mapUiStateDTOtoVO(interactor.getProducts()))
-            while (true) {
-                delay(5000)
-                _productsLD.postValue(productListMapper.mapUiStateDTOtoVO(productsInteractor.getProducts()))
-            }
-        }
-    }
-
-    fun loadProducts() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _productsLD.postValue(productListMapper.mapUiStateDTOtoVO(productsInteractor.getProducts()))
+            val products = productListMapper.mapUiStateDTOtoVO(productsInteractor.getProductsDB())
+            _productsLD.postValue(productListMapper.mapUiStateDTOtoVO(productsInteractor.getProductsDB()))
         }
     }
 

@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_productsFragment_to_PDPFragment"
             app:destination="@id/PDPFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_basketFragment"
+            app:destination="@id/basketFragment" />
     </fragment>
 
     <fragment
@@ -26,5 +29,17 @@
         <argument
             android:name="id"
             app:argType="string" />
+        <action
+            android:id="@+id/action_PDPFragment_to_basketFragment"
+            app:destination="@id/basketFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/basketFragment"
+        android:name="alex.android.lab.presentation.view.BasketFragment"
+        android:label="fragment_basket"
+        tools:layout="@layout/fragment_basket" >
+        <action
+            android:id="@+id/action_basketFragment_to_PDPFragment2"
+            app:destination="@id/PDPFragment" />
     </fragment>
 </navigation>

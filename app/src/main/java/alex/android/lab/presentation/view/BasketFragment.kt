@@ -1,8 +1,8 @@
 package alex.android.lab.presentation.view
 
-import alex.android.lab.databinding.FragmentProductsBinding
+import alex.android.lab.databinding.FragmentBasketBinding
 import alex.android.lab.domain.UiStates.UIStates
-import alex.android.lab.presentation.viewModel.ProductsViewModel
+import alex.android.lab.presentation.viewModel.BasketViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,19 +11,19 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ProductsFragment(
-) : Fragment() {
-    private var _binding: FragmentProductsBinding? = null
+class BasketFragment(): Fragment() {
+
+    private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
 
-    private val vm: ProductsViewModel by viewModel()
+    private val vm: BasketViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProductsBinding.inflate(inflater, container, false)
+        _binding = FragmentBasketBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -39,19 +39,19 @@ class ProductsFragment(
             }
         )
 
-        binding.productsRecyclerView.adapter = adapter
+       binding.basketRecyclerView.adapter = adapter
 
         vm.productsLD.observe(viewLifecycleOwner) { products ->
             when (products) {
                 is UIStates.Loading -> {
                     binding.errorFrameLayout.visibility = View.GONE
                     binding.loadingFrameLayout.visibility = View.VISIBLE
-                    vm.loadProducts()
+                    vm.loadProductsDB()
                 }
                 is UIStates.Success -> {
                     binding.errorFrameLayout.visibility = View.GONE
                     binding.loadingFrameLayout.visibility = View.GONE
-                    adapter.submitList(products.data)
+                    adapter.submitList(products.data.filter { it.isFavorite })
                 }
                 is UIStates.Error -> {
                     binding.loadingFrameLayout.visibility = View.GONE
@@ -61,19 +61,10 @@ class ProductsFragment(
             }
         }
 
-        binding.cartButtonView.setOnClickListener {
-            val action = ProductsFragmentDirections.actionProductsFragmentToBasketFragment()
-            findNavController().navigate(action)
-        }
-
-        binding.cartButtonView.setOnCartChangeListener { count ->
-            //vm.setCartCount(prod)
-        }
-
         binding.reloadButton.setOnClickListener {
             binding.errorFrameLayout.visibility = View.GONE
             binding.loadingFrameLayout.visibility = View.VISIBLE
-            vm.loadProducts()
+            vm.loadProductsDB()
         }
 
         vm.errorLD.observe(viewLifecycleOwner) { error ->
@@ -97,4 +88,5 @@ class ProductsFragment(
         super.onDestroyView()
         _binding = null
     }
+
 }

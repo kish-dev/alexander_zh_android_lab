@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#878787">
+    android:background="@color/white">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/productIV"
@@ -50,6 +50,7 @@
         android:layout_marginTop="8dp"
         android:isIndicator="true"
         android:rating="3"
+        android:progressBackgroundTint="#EF313131"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/priceTV" />
 
@@ -96,5 +97,17 @@
         app:layout_constraintStart_toEndOf="@+id/ratingView"
         app:layout_constraintTop_toBottomOf="@+id/priceTV"
         app:layout_constraintVertical_bias="0.025" />
+
+    <alex.android.lab.presentation.customView.CartButtonView
+        android:id="@+id/cartButtonView"
+        android:layout_width="315dp"
+        android:layout_height="50dp"
+        android:padding="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/productIV"
+        app:layout_constraintVertical_bias="0.4" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

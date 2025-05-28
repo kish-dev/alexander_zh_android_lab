@@ -5,44 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/fullscreenBackgroundColor"
-    android:theme="@style/ThemeOverlay.AlexAndroidLab.FullscreenContainer"
-    tools:context=".presentation.view.ProductsFragment">
-
+    tools:context=".presentation.view.BasketFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/productsRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/basketRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:padding="8dp"
-        android:paddingBottom="60dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/cartButtonLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/product_list_item" />
-
-    <LinearLayout
-        android:id="@+id/cartButtonLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/fullscreenBackgroundColor"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:theme="@style/ThemeOverlay.AlexAndroidLab.FullscreenContainer"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-
-        <alex.android.lab.presentation.customView.CartButtonView
-            android:id="@+id/cartButtonView"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginStart="300dp" />
-    </LinearLayout>
-
 
     <FrameLayout
         android:id="@+id/loadingFrameLayout"
@@ -97,7 +69,6 @@
             android:text="Error" />
 
     </FrameLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
