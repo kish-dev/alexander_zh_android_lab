@@ -1,63 +1,126 @@
 package alex.android.lab.presentation.customView
 
+import alex.android.lab.R
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
-import android.view.View
+import android.widget.LinearLayout
+import androidx.core.graphics.drawable.DrawableCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
-class CartButtonView @JvmOverloads constructor(
+open class CartButtonView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
 
-    // Состояния кнопки
-    enum class State {
-        ADD_TO_CART, // Состояние 1 - "В корзину"
-        QUANTITY_CONTROL // Состояние 2 - с +/-
+    enum class Mode {
+        SIMPLE,
+        EXPANDABLE
     }
 
-    private var currentState = State.ADD_TO_CART
-    private var quantity = 1
-    private var inCartCount = 0 // Будем получать из БД
+    enum class State {
+        ADD_TO_CART,
+        QUANTITY_CONTROL
+    }
 
-    // Paint объекты для рисования
-    private val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val checkMarkPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val plusMinusPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-
-    // Цвета
     private val blueColor = Color.parseColor("#1976D2")
     private val darkBlueColor = Color.parseColor("#1565C0")
     private val lightGreenColor = Color.parseColor("#4CAF50")
     private val whiteColor = Color.WHITE
 
-    // Размеры и отступы
+    private val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val checkMarkPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val plusMinusPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
     private val cornerRadius = 8.dpToPx()
     private val checkMarkRadius = 12.dpToPx()
     private val padding = 8.dpToPx()
 
-    // Анимации
+    private var iconDrawable: Drawable? = null
+    private var iconSize = 16.dpToPx().toInt()
+    private var iconPadding = 4.dpToPx().toInt()
+    private var iconTint: Int? = null
+    private val iconRect = Rect()
+
+    private var mode = Mode.SIMPLE
+    private var currentState = State.ADD_TO_CART
+    private var quantity = 1
+    private var inCartCount = 0
     private var animationProgress = 0f
-    private val animator = ValueAnimator()
+
+    private var cartChangeListener: ((Int) -> Unit)? = null
+    var onFirstAddToCartListener: (() -> Unit)? = null
+    var onAddToCartFromQuantityControlListener: (() -> Unit)? = null
+
+    private var longPressJob: Job? = null
+    private var isPlusPressed = false
+    private var isMinusPressed = false
+    private var isAddToCartPressed = false
+
+    private val badgePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.RED
+        style = Paint.Style.FILL
+    }
+    private val badgeTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
+        textSize = 10.spToPx()
+        textAlign = Paint.Align.CENTER
+    }
+    private var badgeCount = 0
 
     init {
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.CartButtonView, defStyleAttr, 0)
+        try {
+            val icon = ta.getDrawable(R.styleable.CartButtonView_iconSrc)
+            icon?.let { setIcon(it) }
+
+            iconSize = ta.getDimensionPixelSize(
+                R.styleable.CartButtonView_iconSize,
+                iconSize
+            )
+
+            iconPadding = ta.getDimensionPixelSize(
+                R.styleable.CartButtonView_iconPadding,
+                iconPadding
+            )
+
+            if (ta.hasValue(R.styleable.CartButtonView_iconTint)) {
+                setIconTint(ta.getColor(R.styleable.CartButtonView_iconTint, Color.WHITE))
+            }
+
+            mode = Mode.values()[
+                ta.getInt(R.styleable.CartButtonView_mode, Mode.SIMPLE.ordinal)
+            ]
+        } finally {
+            ta.recycle()
+        }
+
         setupPaints()
         setupClickListeners()
+        setWillNotDraw(false)
     }
 
     private fun setupPaints() {
-        // Настройка Paint объектов
         bgPaint.style = Paint.Style.FILL
         textPaint.color = whiteColor
         textPaint.textSize = 14.spToPx()
@@ -68,66 +131,101 @@ class CartButtonView @JvmOverloads constructor(
         plusMinusPaint.style = Paint.Style.STROKE
     }
 
-    // Конвертеры dp/sp в пиксели
-    private fun Int.dpToPx(): Float = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), resources.displayMetrics)
-
-    private fun Int.spToPx(): Float = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_SP, this.toFloat(), resources.displayMetrics)
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        when (currentState) {
-            State.ADD_TO_CART -> drawAddToCartState(canvas)
-            State.QUANTITY_CONTROL -> drawQuantityControlState(canvas)
+        when {
+            mode == Mode.SIMPLE -> drawSimpleCartButton(canvas)
+            currentState == State.ADD_TO_CART -> drawAddToCartState(canvas)
+            else -> {
+                drawAddToCartButtonLeft(canvas)
+                drawQuantityControlState(canvas)
+            }
+        }
+        drawBadge(canvas)
+    }
+
+    private fun drawAddToCartButtonLeft(canvas: Canvas) {
+        val buttonWidth = width * 0.6f
+        val buttonRect = RectF(
+            0f,
+            0f,
+            buttonWidth,
+            height.toFloat()
+        )
+
+        bgPaint.color = blueColor
+        canvas.drawRoundRect(buttonRect, cornerRadius, cornerRadius, bgPaint)
+
+        val text = "В корзину"
+        val textY = buttonRect.centerY() - (textPaint.descent() + textPaint.ascent()) / 2
+        canvas.drawText(text, buttonRect.centerX(), textY, textPaint)
+
+        iconDrawable?.let { icon ->
+            val textWidth = textPaint.measureText(text)
+            val totalWidth = textWidth + iconSize + iconPadding
+            val startX = buttonRect.centerX() - totalWidth / 2
+
+            val iconTop = (height - iconSize) / 2
+            iconRect.set(
+                startX.toInt(),
+                iconTop,
+                startX.toInt() + iconSize,
+                iconTop + iconSize
+            )
+            icon.bounds = iconRect
+            icon.draw(canvas)
+
+            val textX = startX + iconSize + iconPadding + textWidth / 2
+            canvas.drawText(text, textX, textY, textPaint)
         }
     }
 
-    private fun drawAddToCartState(canvas: Canvas) {
-        // Рисуем синий фон
+    private fun drawSimpleCartButton(canvas: Canvas) {
         bgPaint.color = blueColor
         canvas.drawRoundRect(
             0f, 0f, width.toFloat(), height.toFloat(),
             cornerRadius, cornerRadius, bgPaint
         )
 
-        // Рисуем текст "В корзину"
-        val textY = height / 2 - (textPaint.descent() + textPaint.ascent()) / 2
-        canvas.drawText("В корзину", width / 2f, textY, textPaint)
+        val text = "В корзину"
+        drawIconWithText(canvas, text)
 
-        // Если товар уже в корзине, рисуем зеленый кружок с галочкой
         if (inCartCount > 0) {
-            val circleX = width - checkMarkRadius
-            val circleY = height - checkMarkRadius
-
-            // Рисуем зеленый круг
-            canvas.drawCircle(circleX, circleY, checkMarkRadius, checkMarkPaint)
-
-            // Рисуем галочку
-            val checkMarkPath = android.graphics.Path().apply {
-                moveTo(circleX - checkMarkRadius / 2, circleY)
-                lineTo(circleX - checkMarkRadius / 4, circleY + checkMarkRadius / 3)
-                lineTo(circleX + checkMarkRadius / 2, circleY - checkMarkRadius / 3)
-            }
-            plusMinusPaint.style = Paint.Style.STROKE
-            canvas.drawPath(checkMarkPath, plusMinusPaint)
+            drawCheckMark(canvas)
         }
     }
 
-    private fun drawQuantityControlState(canvas: Canvas) {
-        // Рисуем темно-синий полупрозрачный фон
-        bgPaint.color = darkBlueColor
-        bgPaint.alpha = 200
+    private fun drawAddToCartState(canvas: Canvas) {
+        bgPaint.color = blueColor
         canvas.drawRoundRect(
             0f, 0f, width.toFloat(), height.toFloat(),
             cornerRadius, cornerRadius, bgPaint
         )
 
-        // Рисуем минус слева
+        val text = "В корзину"
+        drawIconWithText(canvas, text)
+
+        if (inCartCount > 0) {
+            drawCheckMark(canvas)
+        }
+    }
+
+    private fun drawQuantityControlState(canvas: Canvas) {
+        val startX = width * 0.6f
+
+        bgPaint.color = darkBlueColor
+        bgPaint.alpha = 200
+        canvas.drawRoundRect(
+            startX, 0f, width.toFloat(), height.toFloat(),
+            cornerRadius, cornerRadius, bgPaint
+        )
+
         val minusRect = RectF(
-            padding, height / 2f - 8.dpToPx(),
-            padding + 16.dpToPx(), height / 2f + 8.dpToPx()
+            startX + padding,
+            height / 2f - 8.dpToPx(),
+            startX + padding + 16.dpToPx(),
+            height / 2f + 8.dpToPx()
         )
         canvas.drawRoundRect(minusRect, 4.dpToPx(), 4.dpToPx(), plusMinusPaint)
         canvas.drawLine(
@@ -136,10 +234,11 @@ class CartButtonView @JvmOverloads constructor(
             plusMinusPaint
         )
 
-        // Рисуем плюс справа
         val plusRect = RectF(
-            width - padding - 16.dpToPx(), height / 2f - 8.dpToPx(),
-            width - padding, height / 2f + 8.dpToPx()
+            width - padding - 16.dpToPx(),
+            height / 2f - 8.dpToPx(),
+            width - padding,
+            height / 2f + 8.dpToPx()
         )
         canvas.drawRoundRect(plusRect, 4.dpToPx(), 4.dpToPx(), plusMinusPaint)
         canvas.drawLine(
@@ -153,63 +252,140 @@ class CartButtonView @JvmOverloads constructor(
             plusMinusPaint
         )
 
-        // Рисуем количество
         val quantityText = quantity.toString()
         val textY = height / 2 - (textPaint.descent() + textPaint.ascent()) / 2
-        canvas.drawText(quantityText, width / 2f, textY, textPaint)
+        canvas.drawText(quantityText, startX + (width - startX) / 2, textY, textPaint)
     }
+
+    private fun drawIconWithText(canvas: Canvas, text: String) {
+        iconDrawable?.let { icon ->
+            val textWidth = textPaint.measureText(text)
+            val totalWidth = textWidth + iconSize + iconPadding
+            val startX = (width - totalWidth) / 2
+
+            val iconTop = (height - iconSize) / 2
+            iconRect.set(
+                startX.toInt(),
+                iconTop,
+                startX.toInt() + iconSize,
+                iconTop + iconSize
+            )
+            icon.bounds = iconRect
+            icon.draw(canvas)
+
+            val textY = height / 2 - (textPaint.descent() + textPaint.ascent()) / 2
+            val textX = startX + iconSize + iconPadding + textWidth / 2
+            canvas.drawText(text, textX, textY, textPaint)
+        } ?: run {
+            val textY = height / 2 - (textPaint.descent() + textPaint.ascent()) / 2
+            canvas.drawText(text, width / 2f, textY, textPaint)
+        }
+    }
+
+    private fun drawBadge(canvas: Canvas) {
+        if (badgeCount <= 0) return
+
+        val badgeRadius = 8.dpToPx()
+        val badgeX = width - badgeRadius - 2.dpToPx()
+        val badgeY = badgeRadius + 2.dpToPx()
+
+        canvas.drawCircle(badgeX, badgeY, badgeRadius, badgePaint)
+
+        val text = if (badgeCount > 9) "9+" else badgeCount.toString()
+        val textY = badgeY - (badgeTextPaint.descent() + badgeTextPaint.ascent()) / 2
+        canvas.drawText(text, badgeX, textY, badgeTextPaint)
+    }
+
+    private fun drawCheckMark(canvas: Canvas) {
+        val circleX = width - checkMarkRadius
+        val circleY = height - checkMarkRadius
+
+        canvas.drawCircle(circleX, circleY, checkMarkRadius, checkMarkPaint)
+        val checkMarkPath = Path().apply {
+            moveTo(circleX - checkMarkRadius / 2, circleY)
+            lineTo(circleX - checkMarkRadius / 4, circleY + checkMarkRadius / 3)
+            lineTo(circleX + checkMarkRadius / 2, circleY - checkMarkRadius / 3)
+        }
+        plusMinusPaint.style = Paint.Style.STROKE
+        canvas.drawPath(checkMarkPath, plusMinusPaint)
+    }
+
     private fun setupClickListeners() {
         setOnClickListener {
-            if (currentState == State.ADD_TO_CART) {
-                // Переход в состояние с количеством
-                animateStateChange(State.QUANTITY_CONTROL)
-                // Переход на экран корзины (если нужно)
-                // context.startActivity(Intent(context, CartActivity::class.java))
+            when (mode) {
+                Mode.SIMPLE -> {
+                    if (inCartCount == 0) {
+                        onFirstAddToCartListener?.invoke()
+                    }
+                }
+                Mode.EXPANDABLE -> {
+                    if (currentState == State.ADD_TO_CART) {
+                        if (inCartCount == 0) {
+                            onFirstAddToCartListener?.invoke()
+                        }
+                        animateStateChange(State.QUANTITY_CONTROL)
+                        updateCartCount()
+                    }
+                }
             }
         }
-
-        // Обработка долгого нажатия для быстрого изменения количества
-//        setOnLongClickListener { v ->
-//            when {
-//                isInMinusArea(v, MotionEvent.ACTION_DOWN) -> {
-//                    startContinuousDecrease()
-//                    true
-//                }
-//                isInPlusArea(v, MotionEvent.ACTION_DOWN) -> {
-//                    startContinuousIncrease()
-//                    true
-//                }
-//                else -> false
-//            }
-//        }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_UP -> {
-                animator.cancel() // Отменяем долгое нажатие
+        if (mode == Mode.EXPANDABLE && currentState == State.QUANTITY_CONTROL) {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    val leftButtonWidth = width * 0.6f
 
-                if (currentState == State.QUANTITY_CONTROL) {
-                    when {
-                        isInMinusArea(this, event) -> decreaseQuantity()
-                        isInPlusArea(this, event) -> increaseQuantity()
+                    if (event.x < leftButtonWidth) {
+                        isAddToCartPressed = true
+                        return true
+                    } else {
+                        if (isInMinusArea(event)) {
+                            isMinusPressed = true
+                            decreaseQuantity()
+                            startContinuousChange(false)
+                            return true
+                        } else if (isInPlusArea(event)) {
+                            isPlusPressed = true
+                            increaseQuantity()
+                            startContinuousChange(true)
+                            return true
+                        }
                     }
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (isAddToCartPressed) {
+                        onAddToCartFromQuantityControlListener?.invoke()
+                    }
+                    isPlusPressed = false
+                    isMinusPressed = false
+                    isAddToCartPressed = false
+                    longPressJob?.cancel()
+                    return true
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    isPlusPressed = false
+                    isMinusPressed = false
+                    isAddToCartPressed = false
+                    longPressJob?.cancel()
+                    return true
                 }
             }
         }
         return super.onTouchEvent(event)
     }
 
-    private fun isInMinusArea(view: View, event: MotionEvent): Boolean {
+    private fun isInMinusArea(event: MotionEvent): Boolean {
+        val leftButtonWidth = width * 0.6f
         val minusRect = RectF(
-            padding, 0f,
-            padding + 32.dpToPx(), height.toFloat()
+            leftButtonWidth + padding, 0f,
+            leftButtonWidth + padding + 32.dpToPx(), height.toFloat()
         )
         return minusRect.contains(event.x, event.y)
     }
 
-    private fun isInPlusArea(view: View, event: MotionEvent): Boolean {
+    private fun isInPlusArea(event: MotionEvent): Boolean {
         val plusRect = RectF(
             width - padding - 32.dpToPx(), 0f,
             width - padding.toFloat(), height.toFloat()
@@ -219,52 +395,41 @@ class CartButtonView @JvmOverloads constructor(
 
     private fun increaseQuantity() {
         quantity++
-        updateCartCountInDB(quantity)
+        updateCartCount()
         invalidate()
     }
 
     private fun decreaseQuantity() {
         if (quantity > 1) {
             quantity--
-            updateCartCountInDB(quantity)
+            updateCartCount()
             invalidate()
         } else {
-            // Возвращаемся в состояние "В корзину"
+            quantity = 0
+            inCartCount = 0
+            updateCartCount()
             animateStateChange(State.ADD_TO_CART)
         }
     }
 
-    private fun startContinuousIncrease() {
-        animator.cancel()
-        animator.setIntValues(quantity, quantity + 10)
-        animator.duration = 1000
-        animator.addUpdateListener {
-            quantity = it.animatedValue as Int
-            updateCartCountInDB(quantity)
-            invalidate()
+    private fun startContinuousChange(isIncrease: Boolean) {
+        longPressJob?.cancel()
+        longPressJob = CoroutineScope(Dispatchers.Main).launch {
+            delay(500)
+            while (isActive && (if (isIncrease) isPlusPressed else isMinusPressed)) {
+                if (isIncrease) {
+                    increaseQuantity()
+                } else {
+                    decreaseQuantity()
+                }
+                delay(100)
         }
-        animator.start()
+        }
     }
 
-    private fun startContinuousDecrease() {
-        animator.cancel()
-        val target = if (quantity > 5) quantity - 5 else 1
-        animator.setIntValues(quantity, target)
-        animator.duration = 1000
-        animator.addUpdateListener {
-            quantity = it.animatedValue as Int
-            updateCartCountInDB(quantity)
-            invalidate()
+    fun animateStateChange(newState: State) {
+        if (mode == Mode.SIMPLE) return
 
-            if (quantity == 1) {
-                animator.cancel()
-                animateStateChange(State.ADD_TO_CART)
-            }
-        }
-        animator.start()
-    }
-
-    private fun animateStateChange(newState: State) {
         val anim = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 200
             addUpdateListener {
@@ -282,24 +447,124 @@ class CartButtonView @JvmOverloads constructor(
         anim.start()
     }
 
+    private fun updateCartCount() {
+        inCartCount = if (quantity > 0) quantity else 0
+        cartChangeListener?.invoke(quantity)
+        invalidate()
+    }
+
+    fun setMode(newMode: Mode) {
+        mode = newMode
+        invalidate()
+    }
+
     fun setInCartCount(count: Int) {
         inCartCount = count
-        if (count > 0 && currentState == State.ADD_TO_CART) {
+        if (count > 0) {
             quantity = count
+            if (mode == Mode.SIMPLE) {
+                currentState = State.ADD_TO_CART
+            }
         }
         invalidate()
     }
 
     fun setOnCartChangeListener(listener: (Int) -> Unit) {
-        this.cartChangeListener = listener
+        cartChangeListener = listener
     }
 
-    private var cartChangeListener: ((Int) -> Unit)? = null
-
-    private fun updateCartCountInDB(count: Int) {
-        inCartCount = count
-        cartChangeListener?.invoke(count)
-        // Здесь также можно вызвать обновление в ViewModel
+    fun setBadgeCount(count: Int) {
+        badgeCount = count
+        invalidate()
     }
 
+    fun setIcon(drawable: Drawable?) {
+        iconDrawable = drawable?.mutate()
+        iconTint?.let { tint ->
+            DrawableCompat.setTint(iconDrawable!!, tint)
+        }
+        iconDrawable?.setBounds(0, 0, iconSize, iconSize)
+        invalidate()
+    }
+
+    fun setIconTint(color: Int) {
+        iconTint = color
+        iconDrawable?.let {
+            DrawableCompat.setTint(it, color)
+        }
+        invalidate()
+    }
+
+    private fun Int.dpToPx(): Float = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), resources.displayMetrics)
+
+    private fun Int.spToPx(): Float = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_SP, this.toFloat(), resources.displayMetrics)
+
+    override fun onSaveInstanceState(): Parcelable? {
+        val superState = super.onSaveInstanceState()
+        return CartButtonState(
+            quantity = quantity,
+            inCartCount = inCartCount,
+            currentState = currentState,
+            mode = mode,
+            superState = superState
+        )
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is CartButtonState) {
+            super.onRestoreInstanceState(state.superState)
+            quantity = state.quantity
+            inCartCount = state.inCartCount
+            currentState = state.currentState
+            mode = state.mode
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+        invalidate()
+    }
+
+    class CartButtonState : BaseSavedState {
+        val quantity: Int
+        val inCartCount: Int
+        val currentState: State
+        val mode: Mode
+
+        constructor(
+            quantity: Int,
+            inCartCount: Int,
+            currentState: State,
+            mode: Mode,
+            superState: Parcelable?
+        ) : super(superState) {
+            this.quantity = quantity
+            this.inCartCount = inCartCount
+            this.currentState = currentState
+            this.mode = mode
+        }
+
+        constructor(parcel: Parcel) : super(parcel) {
+            quantity = parcel.readInt()
+            inCartCount = parcel.readInt()
+            currentState = State.values()[parcel.readInt()]
+            mode = Mode.values()[parcel.readInt()]
+        }
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            super.writeToParcel(parcel, flags)
+            parcel.writeInt(quantity)
+            parcel.writeInt(inCartCount)
+            parcel.writeInt(currentState.ordinal)
+            parcel.writeInt(mode.ordinal)
+        }
+
+        companion object {
+            @JvmField
+            val CREATOR = object : Parcelable.Creator<CartButtonState> {
+                override fun createFromParcel(parcel: Parcel) = CartButtonState(parcel)
+                override fun newArray(size: Int) = arrayOfNulls<CartButtonState>(size)
+            }
+        }
+    }
 }

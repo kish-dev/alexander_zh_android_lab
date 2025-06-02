@@ -1,7 +1,9 @@
 package alex.android.lab.presentation.view
 
+import alex.android.lab.R
 import alex.android.lab.databinding.FragmentProductsBinding
 import alex.android.lab.domain.UiStates.UIStates
+import alex.android.lab.presentation.customView.CartButtonView
 import alex.android.lab.presentation.viewModel.ProductsViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +20,9 @@ class ProductsFragment(
 
     private val vm: ProductsViewModel by viewModel()
 
+    private lateinit var cartButtonView: CartButtonView
+    private lateinit var homeButton: View
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,6 +34,8 @@ class ProductsFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initBottomMenu()
 
         val adapter = ProductsAdapter (
             onItemClick = { productId ->
@@ -61,13 +68,12 @@ class ProductsFragment(
             }
         }
 
-        binding.cartButtonView.setOnClickListener {
-            val action = ProductsFragmentDirections.actionProductsFragmentToBasketFragment()
-            findNavController().navigate(action)
+        vm.inCartProductsCountLD.observe(viewLifecycleOwner) { count ->
+            cartButtonView.setBadgeCount(count)
         }
 
-        binding.cartButtonView.setOnCartChangeListener { count ->
-            //vm.setCartCount(prod)
+        vm.errorLD.observe(viewLifecycleOwner) { error ->
+            binding.ErrorTypeTextView.text = error
         }
 
         binding.reloadButton.setOnClickListener {
@@ -75,15 +81,28 @@ class ProductsFragment(
             binding.loadingFrameLayout.visibility = View.VISIBLE
             vm.loadProducts()
         }
-
-        vm.errorLD.observe(viewLifecycleOwner) { error ->
-            binding.ErrorTypeTextView.text = error
-        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        vm.loadProductsDB()
+    private fun initBottomMenu() {
+        val bottomMenuView = binding.cartButtonLayout.getChildAt(0)
+
+        cartButtonView = bottomMenuView.findViewById(R.id.cartButtonView)
+        homeButton = bottomMenuView.findViewById(R.id.homeButton)
+
+        cartButtonView.apply {
+            setMode(CartButtonView.Mode.SIMPLE)
+            setOnClickListener {
+                openCartFragment()
+            }
+        }
+
+        homeButton.setOnClickListener {
+            findNavController().popBackStack(R.id.productsFragment, false)
+        }
+    }
+    private fun openCartFragment() {
+        val action = ProductsFragmentDirections.actionProductsFragmentToCartFragment()
+        findNavController().navigate(action)
     }
 
     private fun openPdpFragment(productId: String) {
@@ -91,6 +110,12 @@ class ProductsFragment(
             id = productId
         )
         findNavController().navigate(action)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.getInCartProductsCount()
+        vm.loadProductsDB()
     }
 
     override fun onDestroyView() {

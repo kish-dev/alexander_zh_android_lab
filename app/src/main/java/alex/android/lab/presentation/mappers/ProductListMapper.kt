@@ -14,8 +14,8 @@ class ProductListMapper {
             rating = products.rating,
             isFavorite = products.isFavorite,
             isInCart = products.isInCart,
-            viewCount = products.viewCount
-
+            viewCount = products.viewCount,
+            inCartCount = products.inCartCount
         )
     }
     fun mapUiStateDTOtoVO( products: UIStates<List<ProductInListDomainDTO>>): UIStates<List<ProductInListVO>> {

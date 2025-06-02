@@ -5,6 +5,7 @@ import alex.android.lab.databinding.ProductListItemBinding
 import alex.android.lab.presentation.viewObject.ProductInListVO
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
@@ -42,6 +43,13 @@ class ProductsAdapter(
                     .load(product.image)
                     .into(productIV)
                 tvViewCount.text = product.viewCount.toString()
+                if (product.inCartCount > 0){
+                    tvCartCount.text = product.inCartCount.toString()
+                    ivCart.setVisibility(View.VISIBLE)
+                } else {
+                    ivCart.setVisibility(View.INVISIBLE)
+                    tvCartCount.setVisibility(View.INVISIBLE)
+                }
 
                 updateLikeButton(product.isFavorite)
 

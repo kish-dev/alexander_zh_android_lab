@@ -2,6 +2,7 @@ package alex.android.lab.presentation.view
 
 import alex.android.lab.R
 import alex.android.lab.databinding.PdpFragmentBinding
+import alex.android.lab.presentation.customView.CartButtonView
 import alex.android.lab.presentation.viewModel.PdpViewModel
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -41,15 +43,35 @@ class PdpFragment : Fragment() {
                 nameTV.text = product.name
                 priceTV.text = product.price
                 ratingView.progress = product.rating.toInt()
+                tvViewCount.text = product.viewCount.toString()
                 Glide.with(requireContext())
                     .load(product.image)
                     .into(productIV)
                 updateLikeButton(product.isFavorite)
-                tvViewCount.text = product.viewCount.toString()
+
                 btnLike.setOnClickListener {
                     val newFavoriteState = !product.isFavorite
                     updateLikeButton(newFavoriteState)
                     vm.toggleFavorite(product.guid, newFavoriteState)
+                }
+                cartButtonViewCounter.apply {
+                    setMode(CartButtonView.Mode.EXPANDABLE)
+                    if (product.inCartCount > 0) {
+                        animateStateChange(CartButtonView.State.QUANTITY_CONTROL)
+                        setInCartCount(product.inCartCount)
+                    }
+                    setOnCartChangeListener { count ->
+                        vm.updateInCartCount(product.guid, count)
+                    }
+                    onFirstAddToCartListener = {
+                        setInCartCount(1)
+                        vm.updateInCartCount(product.guid, 1)
+                    }
+                    onAddToCartFromQuantityControlListener = {
+                        val action = PdpFragmentDirections.actionPDPFragmentToCartFragment()
+                        findNavController().navigate(action)
+                    }
+
                 }
             }
         }
@@ -62,6 +84,12 @@ class PdpFragment : Fragment() {
             ContextCompat.getColor(requireContext(), R.color.black_overlay)
         }
         binding.btnLike.compoundDrawableTintList = ColorStateList.valueOf(color)
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        vm.getInCartProductsCount()
     }
 
 

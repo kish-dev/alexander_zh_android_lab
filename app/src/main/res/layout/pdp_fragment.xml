@@ -98,16 +98,42 @@
         app:layout_constraintTop_toBottomOf="@+id/priceTV"
         app:layout_constraintVertical_bias="0.025" />
 
-    <alex.android.lab.presentation.customView.CartButtonView
-        android:id="@+id/cartButtonView"
-        android:layout_width="315dp"
-        android:layout_height="50dp"
-        android:padding="50dp"
+    <LinearLayout
+        android:id="@+id/cartButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="212dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/productIV"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintVertical_bias="1.0">
 
+<!--        <alex.android.lab.presentation.customView.CartButtonView-->
+<!--            android:id="@+id/cartButtonViewStart"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:padding="50dp"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/productIV"-->
+<!--            app:layout_constraintVertical_bias="0.4" />-->
+
+        <alex.android.lab.presentation.customView.CartButtonView
+            android:id="@+id/cartButtonViewCounter"
+            android:layout_width="306dp"
+            android:layout_height="61dp"
+            android:padding="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/productIV"
+            app:layout_constraintVertical_bias="0.4" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

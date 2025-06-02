@@ -2,6 +2,7 @@ package alex.android.lab.presentation.viewModel
 
 import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.domain.interactors.ProductsInteractor
+import alex.android.lab.domain.interactors.cart.CartInteractor
 import alex.android.lab.presentation.mappers.ProductListMapper
 import alex.android.lab.presentation.viewObject.ProductInListVO
 import androidx.lifecycle.LiveData
@@ -11,8 +12,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BasketViewModel(
+class CartViewModel(
     private val productsInteractor: ProductsInteractor,
+    private val cartInteractor: CartInteractor,
     private val productListMapper: ProductListMapper
 ): ViewModel() {
 
@@ -22,10 +24,18 @@ class BasketViewModel(
     private val _errorLD = MutableLiveData<String>()
     val errorLD: LiveData<String> = _errorLD
 
+    private val _inCartProductsCountLD = MutableLiveData<Int>()
+    val inCartProductsCountLD: LiveData<Int> = _inCartProductsCountLD
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val products = productListMapper.mapUiStateDTOtoVO(productsInteractor.getProductsDB())
             _productsLD.postValue(productListMapper.mapUiStateDTOtoVO(productsInteractor.getProductsDB()))
+        }
+    }
+
+    fun getInCartProductsCount() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _inCartProductsCountLD.postValue(cartInteractor.getInCartProductsCount())
         }
     }
 
@@ -41,6 +51,8 @@ class BasketViewModel(
             _productsLD.postValue(productListMapper.mapUiStateDTOtoVO(productsInteractor.getProducts()))
         }
     }
+
+
 
     fun setError(error: String) {
         _errorLD.value = error

@@ -3,4 +3,22 @@
         <attr name="fullscreenBackgroundColor" format="color" />
         <attr name="fullscreenTextColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="CartButtonView">
+        <attr name="cornerRadius" format="dimension" />
+        <attr name="buttonPadding" format="dimension" />
+        <attr name="textSize" format="dimension" />
+
+        <!-- Icon properties -->
+        <attr name="iconSrc" format="reference"/>
+        <attr name="iconSize" format="dimension"/>
+        <attr name="iconPadding" format="dimension"/>
+        <attr name="iconTint" format="color"/>
+
+        <!-- Mode -->
+        <attr name="mode" format="enum">
+            <enum name="simple" value="0"/>
+            <enum name="expandable" value="1"/>
+        </attr>
+    </declare-styleable>
 </resources>

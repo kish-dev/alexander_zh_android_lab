@@ -10,12 +10,12 @@ plugins {
 apply from: "dependencies.gradle"
 
 android {
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "alex.android.lab"
         minSdk 24
-        targetSdk 34
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -40,6 +40,7 @@ android {
     kotlinOptions {
         jvmTarget = '19'
     }
+    namespace 'alex.android.lab'
 }
 
 dependencies {
@@ -54,6 +55,7 @@ dependencies {
     implementation liveData
     implementation glide
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
     testImplementation junit
     androidTestImplementation androidTestJunit
     androidTestImplementation espresso

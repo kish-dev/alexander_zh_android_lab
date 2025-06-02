@@ -1,8 +1,8 @@
 package alex.android.lab.presentation.viewModel
 
 import alex.android.lab.domain.UiStates.UIStates
-import alex.android.lab.domain.dto.ProductInListDomainDTO
 import alex.android.lab.domain.interactors.ProductsInteractor
+import alex.android.lab.domain.interactors.cart.CartInteractor
 import alex.android.lab.presentation.mappers.ProductListMapper
 import alex.android.lab.presentation.viewObject.ProductInListVO
 import androidx.lifecycle.LiveData
@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class ProductsViewModel(
     private val productsInteractor: ProductsInteractor,
+    private val cartInteractor: CartInteractor,
     private val productListMapper: ProductListMapper
 ) : ViewModel() {
 
@@ -24,14 +25,22 @@ class ProductsViewModel(
     private val _errorLD = MutableLiveData<String>()
     val errorLD: LiveData<String> = _errorLD
 
+    private val _inCartProductsCountLD = MutableLiveData<Int>()
+    val inCartProductsCountLD: LiveData<Int> = _inCartProductsCountLD
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _productsLD.postValue(UIStates.Loading())
-           // _productsLD.postValue(ProductListMapper.mapUiStateDTOtoVO(interactor.getProducts()))
             while (true) {
                 delay(5000)
                 _productsLD.postValue(productListMapper.mapUiStateDTOtoVO(productsInteractor.getProducts()))
             }
+        }
+    }
+
+    fun getInCartProductsCount() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _inCartProductsCountLD.postValue(cartInteractor.getInCartProductsCount())
         }
     }
 
