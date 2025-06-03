@@ -32,27 +32,6 @@
         app:layout_constraintBottom_toBottomOf="parent">
         <include layout="@layout/bottom_menu"/>
     </FrameLayout>
-<!--    <LinearLayout-->
-<!--        android:id="@+id/cartButtonLayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:background="@color/light_blue_A400"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:padding="8dp"-->
-<!--        android:theme="@style/ThemeOverlay.AlexAndroidLab.FullscreenContainer"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent">-->
-
-
-<!--        <alex.android.lab.presentation.customView.CartButtonView-->
-<!--            android:id="@+id/cartButtonView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="50dp"-->
-<!--            android:layout_marginStart="280dp"-->
-<!--            app:iconSrc="@drawable/ic_cart"-->
-<!--            app:iconSize="28dp"-->
-<!--            app:iconPadding="4dp" />-->
-<!--    </LinearLayout>-->
-
 
     <FrameLayout
         android:id="@+id/loadingFrameLayout"
