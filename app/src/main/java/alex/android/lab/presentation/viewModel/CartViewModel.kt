@@ -1,5 +1,6 @@
 package alex.android.lab.presentation.viewModel
 
+import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.domain.interactors.ProductsInteractor
 import alex.android.lab.domain.interactors.cart.CartInteractor
 import alex.android.lab.presentation.mappers.ProductListMapper
@@ -11,39 +12,49 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PdpViewModel(
+class CartViewModel(
     private val productsInteractor: ProductsInteractor,
     private val cartInteractor: CartInteractor,
     private val productListMapper: ProductListMapper
-) : ViewModel() {
-    private val _productLD = MutableLiveData<ProductInListVO>()
-    val productLD: LiveData<ProductInListVO> = _productLD
+): ViewModel() {
+
+    private val _productsLD = MutableLiveData<UIStates<List<ProductInListVO>>>()
+    val productsLD: LiveData<UIStates<List<ProductInListVO>>> = _productsLD
+
+    private val _errorLD = MutableLiveData<String>()
+    val errorLD: LiveData<String> = _errorLD
 
     private val _inCartProductsCountLD = MutableLiveData<Int>()
     val inCartProductsCountLD: LiveData<Int> = _inCartProductsCountLD
 
-    fun loadProduct(guid: String) {
+    init {
         viewModelScope.launch(Dispatchers.IO) {
-            productsInteractor.incrementViewCount(guid)
-            _productLD.postValue(productsInteractor.getProductById(guid).let { productListMapper.toVO(it) })
+            _productsLD.postValue(productListMapper.mapUiStateDTOtoVO(productsInteractor.getProductsDB()))
+        }
+    }
+
+    fun getInCartProductsCount() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _inCartProductsCountLD.postValue(cartInteractor.getInCartProductsCount())
+        }
+    }
+
+    fun loadProductsDB() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _productsLD.postValue(productListMapper.mapUiStateDTOtoVO(productsInteractor.getProductsDB()))
         }
     }
 
     fun toggleFavorite(productId: String, isFavorite: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             productsInteractor.toggleFavorite(productId, isFavorite)
-            loadProduct(productId)
+            _productsLD.postValue(productListMapper.mapUiStateDTOtoVO(productsInteractor.getProducts()))
         }
     }
 
-    fun updateInCartCount(productId: String, count: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            cartInteractor.updateInCartCount(productId, count)
-        }
-    }
-    fun getInCartProductsCount() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _inCartProductsCountLD.postValue(cartInteractor.getInCartProductsCount())
-        }
+
+
+    fun setError(error: String) {
+        _errorLD.value = error
     }
 }

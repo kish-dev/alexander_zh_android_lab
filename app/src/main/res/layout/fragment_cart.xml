@@ -5,14 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="?attr/fullscreenBackgroundColor"
     android:theme="@style/ThemeOverlay.AlexAndroidLab.FullscreenContainer"
-    tools:context=".presentation.view.ProductsFragment">
-
+    tools:context=".presentation.view.CartFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/productsRecyclerView"
+        android:id="@+id/cartRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
@@ -86,7 +84,6 @@
             android:text="Error" />
 
     </FrameLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

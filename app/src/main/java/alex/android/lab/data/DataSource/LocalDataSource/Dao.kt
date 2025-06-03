@@ -25,4 +25,13 @@ interface Dao {
 
     @Query("UPDATE products SET viewCount = viewCount + 1 WHERE guid = :guid")
     suspend fun incrementViewCount(guid: String)
+
+    @Query("UPDATE products SET inCartCount = :inCartCount WHERE guid = :guid")
+    suspend fun updateInCartCount(guid: String, inCartCount: Int)
+
+    @Query("SELECT inCartCount FROM products WHERE guid = :guid")
+    suspend fun getInCartCount(guid: String): Int
+
+    @Query("SELECT COUNT(*) FROM products WHERE inCartCount > 0")
+    suspend fun getInCartProductsCount(): Int
 }

@@ -11,7 +11,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/productIV"
@@ -23,26 +24,28 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/nameTV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="204dp"
+            android:layout_height="22dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:maxLines="1"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.095"
             app:layout_constraintStart_toEndOf="@id/productIV"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Яблоки" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/priceTV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="205dp"
+            android:layout_height="21dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:maxLines="1"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.058"
             app:layout_constraintStart_toEndOf="@id/productIV"
             app:layout_constraintTop_toBottomOf="@id/nameTV"
             tools:text="15P" />
@@ -55,6 +58,7 @@
             android:layout_marginStart="16dp"
             android:isIndicator="true"
             android:rating="3"
+            android:progressBackgroundTint="#EF313131"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/productIV"
             app:layout_constraintTop_toBottomOf="@id/priceTV" />
@@ -82,21 +86,50 @@
             android:tint="@color/black_overlay"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.731"
             app:layout_constraintStart_toEndOf="@+id/btn_like"
-            app:layout_constraintTop_toBottomOf="@+id/priceTV" />
+            app:layout_constraintTop_toBottomOf="@+id/priceTV"
+            app:layout_constraintVertical_bias="0.4" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_view_count"
-            android:layout_width="49dp"
-            android:layout_height="23dp"
+            android:layout_width="39dp"
+            android:layout_height="19dp"
             android:text="0"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.993"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/ratingView"
-            app:layout_constraintTop_toBottomOf="@+id/priceTV" />
+            app:layout_constraintTop_toBottomOf="@+id/priceTV"
+            app:layout_constraintVertical_bias="0.571" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:src="@drawable/ic_cart"
+            android:tint="@color/light_blue_600"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.066" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCartCount"
+            android:layout_width="40dp"
+            android:layout_height="18dp"
+            android:text="0"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/ivCart"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.151" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -8,5 +8,6 @@ data class ProductInListDomainDTO (
     val rating: Double,
     val isFavorite: Boolean,
     val isInCart: Boolean,
-    val viewCount: Int
+    val viewCount: Int,
+    val inCartCount: Int
 )

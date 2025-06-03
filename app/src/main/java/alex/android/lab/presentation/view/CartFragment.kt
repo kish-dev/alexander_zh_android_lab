@@ -1,10 +1,10 @@
 package alex.android.lab.presentation.view
 
 import alex.android.lab.R
-import alex.android.lab.databinding.FragmentProductsBinding
+import alex.android.lab.databinding.FragmentCartBinding
 import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.presentation.customView.CartButtonView
-import alex.android.lab.presentation.viewModel.ProductsViewModel
+import alex.android.lab.presentation.viewModel.CartViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,12 +13,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ProductsFragment(
-) : Fragment() {
-    private var _binding: FragmentProductsBinding? = null
+class CartFragment(): Fragment() {
+
+    private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-    private val vm: ProductsViewModel by viewModel()
+    private val vm: CartViewModel by viewModel()
 
     private lateinit var cartButtonView: CartButtonView
     private lateinit var homeButton: View
@@ -28,7 +28,7 @@ class ProductsFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProductsBinding.inflate(inflater, container, false)
+        _binding = FragmentCartBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -36,7 +36,7 @@ class ProductsFragment(
         super.onViewCreated(view, savedInstanceState)
 
         initBottomMenu()
-
+        
         val adapter = ProductsAdapter (
             onItemClick = { productId ->
                 openPdpFragment(productId)
@@ -46,19 +46,19 @@ class ProductsFragment(
             }
         )
 
-        binding.productsRecyclerView.adapter = adapter
+       binding.cartRecyclerView.adapter = adapter
 
         vm.productsLD.observe(viewLifecycleOwner) { products ->
             when (products) {
                 is UIStates.Loading -> {
                     binding.errorFrameLayout.visibility = View.GONE
                     binding.loadingFrameLayout.visibility = View.VISIBLE
-                    vm.loadProducts()
+                    vm.loadProductsDB()
                 }
                 is UIStates.Success -> {
                     binding.errorFrameLayout.visibility = View.GONE
                     binding.loadingFrameLayout.visibility = View.GONE
-                    adapter.submitList(products.data)
+                    adapter.submitList(products.data.filter { it.inCartCount > 0 })
                 }
                 is UIStates.Error -> {
                     binding.loadingFrameLayout.visibility = View.GONE
@@ -72,15 +72,16 @@ class ProductsFragment(
             cartButtonView.setBadgeCount(count)
         }
 
-        vm.errorLD.observe(viewLifecycleOwner) { error ->
-            binding.ErrorTypeTextView.text = error
-        }
-
         binding.reloadButton.setOnClickListener {
             binding.errorFrameLayout.visibility = View.GONE
             binding.loadingFrameLayout.visibility = View.VISIBLE
-            vm.loadProducts()
+            vm.loadProductsDB()
         }
+
+        vm.errorLD.observe(viewLifecycleOwner) { error ->
+            binding.ErrorTypeTextView.text = error
+        }
+        vm.loadProductsDB()
     }
 
     private fun initBottomMenu() {
@@ -89,37 +90,27 @@ class ProductsFragment(
         cartButtonView = bottomMenuView.findViewById(R.id.cartButtonView)
         homeButton = bottomMenuView.findViewById(R.id.homeButton)
 
-        cartButtonView.apply {
-            setMode(CartButtonView.Mode.SIMPLE)
-            setOnClickListener {
-                openCartFragment()
-            }
-        }
-
         homeButton.setOnClickListener {
             findNavController().popBackStack(R.id.productsFragment, false)
         }
     }
-    private fun openCartFragment() {
-        val action = ProductsFragmentDirections.actionProductsFragmentToCartFragment()
-        findNavController().navigate(action)
-    }
-
-    private fun openPdpFragment(productId: String) {
-        val action = ProductsFragmentDirections.actionProductsFragmentToPDPFragment(
-            id = productId
-        )
-        findNavController().navigate(action)
-    }
 
     override fun onResume() {
         super.onResume()
-        vm.getInCartProductsCount()
         vm.loadProductsDB()
+        vm.getInCartProductsCount()
+    }
+
+    private fun openPdpFragment(productId: String) {
+        val action = CartFragmentDirections.actionCartFragmentToPDPFragment(
+            id = productId
+        )
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }

@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [ProductInListEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class MainRoomDB : RoomDatabase() {
@@ -19,7 +19,7 @@ abstract class MainRoomDB : RoomDatabase() {
         @Volatile
         private var INSTANCE: MainRoomDB? = null
 
-        val MIGRATION_1_2 = object : Migration(1, 2) {
+        val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     "ALTER TABLE products ADD COLUMN viewCount INTEGER NOT NULL DEFAULT 0"
@@ -34,7 +34,7 @@ abstract class MainRoomDB : RoomDatabase() {
                     MainRoomDB::class.java,
                     "main_database"
                 )
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_2_3)
                 .fallbackToDestructiveMigration()
                 .build()
                 INSTANCE = instance
