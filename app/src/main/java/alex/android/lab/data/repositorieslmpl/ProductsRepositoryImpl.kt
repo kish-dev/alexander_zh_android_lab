@@ -15,7 +15,7 @@ class ProductsRepositoryImpl (
     private val productListMapper: ProductListMapperDTO,
     private val entityMapper: EntityMapper,
     private val dao: Dao
-): ProductsRepository, KoinComponent {
+): ProductsRepository {
 
     override suspend fun getProductsDB(): ApiResult<List<ProductInListDomainDTO>> {
         return ApiResult.Success(dao.getProducts().map { entityMapper.toDomainDTO(it) })

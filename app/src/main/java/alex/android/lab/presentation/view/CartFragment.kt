@@ -4,6 +4,8 @@ import alex.android.lab.R
 import alex.android.lab.app.App
 import alex.android.lab.databinding.FragmentCartBinding
 import alex.android.lab.di.featureComponents.CartComponent
+import alex.android.lab.di.featureComponents.CartModule
+import alex.android.lab.di.featureComponents.DaggerCartComponent
 import alex.android.lab.di.featureComponents.DaggerPdpComponent
 import alex.android.lab.di.featureComponents.PdpComponent
 import alex.android.lab.di.featureComponents.PdpModule

@@ -6,7 +6,7 @@ import alex.android.lab.di.DaggerAppComponent
 import android.app.Application
 
 class App: Application() {
-    lateinit var appComponent: AppComponent
+    private lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
