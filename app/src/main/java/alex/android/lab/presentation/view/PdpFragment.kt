@@ -1,9 +1,14 @@
 package alex.android.lab.presentation.view
 
 import alex.android.lab.R
+import alex.android.lab.app.App
 import alex.android.lab.databinding.PdpFragmentBinding
+import alex.android.lab.di.featureComponents.DaggerPdpComponent
+import alex.android.lab.di.featureComponents.PdpComponent
+import alex.android.lab.di.featureComponents.PdpModule
 import alex.android.lab.presentation.customView.CartButtonView
 import alex.android.lab.presentation.viewModel.PdpViewModel
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,7 +24,20 @@ class PdpFragment : Fragment() {
     private var _binding: PdpFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private val vm: PdpViewModel by viewModel<PdpViewModel>()
+    private lateinit var pdpComponent: PdpComponent
+    private lateinit var vm: PdpViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        pdpComponent = DaggerPdpComponent.builder()
+            .appComponent((requireActivity().application as App).getAppComponent())
+            .pdpModule(PdpModule())
+            .build()
+
+        pdpComponent.inject(this)
+        vm = pdpComponent.getPdpViewModel()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
