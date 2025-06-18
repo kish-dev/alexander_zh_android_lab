@@ -1,10 +1,17 @@
 package alex.android.lab.presentation.view
 
 import alex.android.lab.R
+import alex.android.lab.app.App
 import alex.android.lab.databinding.FragmentCartBinding
+import alex.android.lab.di.featureComponents.CartComponent
+import alex.android.lab.di.featureComponents.DaggerPdpComponent
+import alex.android.lab.di.featureComponents.PdpComponent
+import alex.android.lab.di.featureComponents.PdpModule
 import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.presentation.customView.CartButtonView
 import alex.android.lab.presentation.viewModel.CartViewModel
+import alex.android.lab.presentation.viewModel.PdpViewModel
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,10 +25,23 @@ class CartFragment(): Fragment() {
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-    private val vm: CartViewModel by viewModel()
-
     private lateinit var cartButtonView: CartButtonView
     private lateinit var homeButton: View
+
+    private lateinit var cartComponent: CartComponent
+    private lateinit var vm: CartViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        cartComponent = DaggerCartComponent.builder()
+            .appComponent((requireActivity().application as App).getAppComponent())
+            .cartModule(CartModule())
+            .build()
+
+        cartComponent.inject(this)
+        vm = cartComponent.getCartViewModel()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
