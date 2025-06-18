@@ -27,20 +27,19 @@ class ProductsFragment(
     private lateinit var cartButtonView: CartButtonView
     private lateinit var homeButton: View
 
-    @Inject
-    lateinit var vm: ProductsViewModel
     private lateinit var productsComponent: ProductsComponent
+    private lateinit var vm: ProductsViewModel
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        // Создаём компонент для этого фрагмента
         productsComponent = DaggerProductsComponent.builder()
-            .appComponent((requireActivity().application as App).appComponent)
+            .appComponent((requireActivity().application as App).getAppComponent())
             .productsModule(ProductsModule())
             .build()
 
-        productsComponent.inject(this) // Внедряем зависимости
+        productsComponent.inject(this)
+        vm = productsComponent.getProductsViewModel()
     }
 
     override fun onCreateView(
