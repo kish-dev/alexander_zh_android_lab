@@ -38,7 +38,6 @@ class CartFragment(): Fragment() {
 
         cartComponent = DaggerCartComponent.builder()
             .appComponent((requireActivity().application as App).getAppComponent())
-            .cartModule(CartModule())
             .build()
 
         cartComponent.inject(this)

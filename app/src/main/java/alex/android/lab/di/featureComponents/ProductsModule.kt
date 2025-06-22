@@ -12,6 +12,7 @@ import alex.android.lab.domain.repositories.cart.CartRepository
 import alex.android.lab.presentation.mappers.ProductListMapper
 import alex.android.lab.presentation.view.ProductsFragment
 import alex.android.lab.presentation.viewModel.ProductsViewModel
+import dagger.Binds
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -28,24 +29,33 @@ interface ProductsComponent {
 }
 
 @Module
-class ProductsModule {
-    @Provides
+abstract class ProductsModule {
+
+    companion object {
+        @Provides
+        @FeatureScope
+        fun provideCartInteractor(cartRepository: CartRepository): CartInteractor = CartInteractorImpl(cartRepository)
+
+        @Provides
+        @FeatureScope
+        fun provideProductsViewModel(
+            productsInteractor: ProductsInteractor,
+            cartInteractor: CartInteractor,
+            productListMapper: ProductListMapper
+        ): ProductsViewModel = ProductsViewModel(productsInteractor, cartInteractor, productListMapper)
+    }
+
+    @Binds
     @FeatureScope
-    fun provideProductsInteractor(
-        productsRepository: ProductsRepository,
-        uiStatesMapper: UIStatesMapper
-    ): ProductsInteractor = ProductsInteractorImpl(productsRepository, uiStatesMapper)
+    abstract fun bindProductsInteractor(productsInteractorImpl: ProductsInteractorImpl): ProductsInteractor
 
 
-    @Provides
-    @FeatureScope
-    fun provideCartInteractor(cartRepository: CartRepository): CartInteractor = CartInteractorImpl(cartRepository)
+//    @Provides
+//    @FeatureScope
+//    fun provideProductsInteractor(
+//        productsRepository: ProductsRepository,
+//        uiStatesMapper: UIStatesMapper
+//    ): ProductsInteractor = ProductsInteractorImpl(productsRepository, uiStatesMapper)
 
-    @Provides
-    @FeatureScope
-    fun provideProductsViewModel(
-        productsInteractor: ProductsInteractor,
-        cartInteractor: CartInteractor,
-        productListMapper: ProductListMapper
-    ): ProductsViewModel = ProductsViewModel(productsInteractor, cartInteractor, productListMapper)
+
 }

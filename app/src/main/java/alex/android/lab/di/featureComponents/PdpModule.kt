@@ -12,6 +12,7 @@ import alex.android.lab.domain.repositories.cart.CartRepository
 import alex.android.lab.presentation.mappers.ProductListMapper
 import alex.android.lab.presentation.view.PdpFragment
 import alex.android.lab.presentation.viewModel.PdpViewModel
+import dagger.Binds
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -28,23 +29,26 @@ interface PdpComponent {
 }
 
 @Module
-class PdpModule {
-    @Provides
+abstract class PdpModule {
+    @Binds
     @FeatureScope
-    fun provideProductsInteractor(
-        productsRepository: ProductsRepository,
-        uiStatesMapper: UIStatesMapper
-    ): ProductsInteractor = ProductsInteractorImpl(productsRepository, uiStatesMapper)
+    abstract fun bindProductsInteractor(
+        productsInteractorImpl: ProductsInteractorImpl
+    ): ProductsInteractor
 
-    @Provides
-    @FeatureScope
-    fun provideCartInteractor(cartRepository: CartRepository): CartInteractor = CartInteractorImpl(cartRepository)
 
-    @Provides
-    @FeatureScope
-    fun providePdpViewModel(
-        productsInteractor: ProductsInteractor,
-        cartInteractor: CartInteractor,
-        productListMapper: ProductListMapper
-    ): PdpViewModel = PdpViewModel(productsInteractor, cartInteractor, productListMapper)
+    companion object {
+        @Provides
+        @FeatureScope
+        fun provideCartInteractor(cartRepository: CartRepository): CartInteractor =
+            CartInteractorImpl(cartRepository)
+
+        @Provides
+        @FeatureScope
+        fun providePdpViewModel(
+            productsInteractor: ProductsInteractor,
+            cartInteractor: CartInteractor,
+            productListMapper: ProductListMapper
+        ): PdpViewModel = PdpViewModel(productsInteractor, cartInteractor, productListMapper)
+    }
 }

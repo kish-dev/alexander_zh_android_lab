@@ -12,6 +12,7 @@ import alex.android.lab.domain.repositories.cart.CartRepository
 import alex.android.lab.presentation.mappers.ProductListMapper
 import alex.android.lab.presentation.view.CartFragment
 import alex.android.lab.presentation.viewModel.CartViewModel
+import dagger.Binds
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -28,23 +29,27 @@ interface CartComponent {
 }
 
 @Module
-class CartModule {
-    @Provides
-    @FeatureScope
-    fun provideProductsInteractor(
-        productsRepository: ProductsRepository,
-        uiStatesMapper: UIStatesMapper
-    ): ProductsInteractor = ProductsInteractorImpl(productsRepository, uiStatesMapper)
+abstract class CartModule {
 
-    @Provides
+    @Binds
     @FeatureScope
-    fun provideCartInteractor(cartRepository: CartRepository): CartInteractor = CartInteractorImpl(cartRepository)
+    abstract fun bindProductsInteractor(
+        productsInteractorImpl: ProductsInteractorImpl
+    ): ProductsInteractor
 
-    @Provides
-    @FeatureScope
-    fun provideCartViewModel(
-        productsInteractor: ProductsInteractor,
-        cartInteractor: CartInteractor,
-        productListMapper: ProductListMapper
-    ): CartViewModel = CartViewModel(productsInteractor, cartInteractor, productListMapper)
+    companion object {
+
+        @Provides
+        @FeatureScope
+        fun provideCartInteractor(cartRepository: CartRepository): CartInteractor =
+            CartInteractorImpl(cartRepository)
+
+        @Provides
+        @FeatureScope
+        fun provideCartViewModel(
+            productsInteractor: ProductsInteractor,
+            cartInteractor: CartInteractor,
+            productListMapper: ProductListMapper
+        ): CartViewModel = CartViewModel(productsInteractor, cartInteractor, productListMapper)
+    }
 }

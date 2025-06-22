@@ -32,7 +32,6 @@ class PdpFragment : Fragment() {
 
         pdpComponent = DaggerPdpComponent.builder()
             .appComponent((requireActivity().application as App).getAppComponent())
-            .pdpModule(PdpModule())
             .build()
 
         pdpComponent.inject(this)

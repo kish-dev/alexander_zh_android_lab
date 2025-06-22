@@ -35,7 +35,6 @@ class ProductsFragment(
 
         productsComponent = DaggerProductsComponent.builder()
             .appComponent((requireActivity().application as App).getAppComponent())
-            .productsModule(ProductsModule())
             .build()
 
         productsComponent.inject(this)
