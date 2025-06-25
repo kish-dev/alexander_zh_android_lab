@@ -1,11 +1,11 @@
 package alex.android.lab.app
 
 import alex.android.lab.di.AppComponent
-import alex.android.lab.di.AppModule
 import alex.android.lab.di.DaggerAppComponent
+import alex.android.lab.di.modules.AppModule
 import android.app.Application
 
-class App: Application() {
+class App : Application() {
     private lateinit var appComponent: AppComponent
 
     override fun onCreate() {
@@ -14,6 +14,7 @@ class App: Application() {
             .appModule(AppModule(this))
             .build()
     }
-    fun getAppComponent(): AppComponent = appComponent
 
+    fun getAppComponent(): AppComponent = appComponent
 }
+

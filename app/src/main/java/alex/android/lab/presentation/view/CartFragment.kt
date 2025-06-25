@@ -3,24 +3,20 @@ package alex.android.lab.presentation.view
 import alex.android.lab.R
 import alex.android.lab.app.App
 import alex.android.lab.databinding.FragmentCartBinding
-import alex.android.lab.di.featureComponents.CartComponent
-import alex.android.lab.di.featureComponents.CartModule
-import alex.android.lab.di.featureComponents.DaggerCartComponent
-import alex.android.lab.di.featureComponents.DaggerPdpComponent
-import alex.android.lab.di.featureComponents.PdpComponent
-import alex.android.lab.di.featureComponents.PdpModule
+import alex.android.lab.di.ViewModelFactory
 import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.presentation.customView.CartButtonView
 import alex.android.lab.presentation.viewModel.CartViewModel
-import alex.android.lab.presentation.viewModel.PdpViewModel
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class CartFragment(): Fragment() {
 
@@ -30,18 +26,15 @@ class CartFragment(): Fragment() {
     private lateinit var cartButtonView: CartButtonView
     private lateinit var homeButton: View
 
-    private lateinit var cartComponent: CartComponent
-    private lateinit var vm: CartViewModel
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val vm: CartViewModel by viewModels { viewModelFactory }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
-        cartComponent = DaggerCartComponent.builder()
+        DaggerCartComponent.builder()
             .appComponent((requireActivity().application as App).getAppComponent())
             .build()
-
-        cartComponent.inject(this)
-        vm = cartComponent.getCartViewModel()
+            .inject(this)
     }
 
     override fun onCreateView(

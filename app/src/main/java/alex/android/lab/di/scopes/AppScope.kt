@@ -1,4 +1,4 @@
-package alex.android.lab.di
+package alex.android.lab.di.scopes
 
 import javax.inject.Scope
 

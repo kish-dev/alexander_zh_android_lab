@@ -4,8 +4,9 @@ import alex.android.lab.data.DataSource.RemoteDataSource.RetrofitClient.Products
 import alex.android.lab.data.dto.ProductInListDTO
 import alex.android.lab.domain.ApiResult.ApiResult
 import java.io.IOException
+import javax.inject.Inject
 
-class RemoteDataSource(
+class RemoteDataSource @Inject constructor(
    private val api: ProductsApiService
 ) {
     suspend fun getProducts(): ApiResult<List<ProductInListDTO>> {
