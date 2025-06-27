@@ -3,7 +3,6 @@ package alex.android.lab.presentation.view
 import alex.android.lab.R
 import alex.android.lab.app.App
 import alex.android.lab.databinding.PdpFragmentBinding
-import alex.android.lab.di.ViewModelFactory
 import alex.android.lab.di.featureComponents.DaggerPdpComponent
 import alex.android.lab.presentation.customView.CartButtonView
 import alex.android.lab.presentation.viewModel.PdpViewModel

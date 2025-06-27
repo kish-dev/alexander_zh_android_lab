@@ -2,7 +2,6 @@ package alex.android.lab.app
 
 import alex.android.lab.di.AppComponent
 import alex.android.lab.di.DaggerAppComponent
-import alex.android.lab.di.modules.AppModule
 import android.app.Application
 
 class App : Application() {
@@ -10,9 +9,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.builder()
-            .appModule(AppModule(this))
-            .build()
+        appComponent = DaggerAppComponent.factory()
+            .create(this)
     }
 
     fun getAppComponent(): AppComponent = appComponent

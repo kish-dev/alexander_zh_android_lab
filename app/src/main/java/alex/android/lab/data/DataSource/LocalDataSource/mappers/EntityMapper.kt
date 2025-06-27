@@ -2,8 +2,9 @@ package alex.android.lab.data.DataSource.LocalDataSource.mappers
 
 import alex.android.lab.data.DataSource.LocalDataSource.ProductInListEntity
 import alex.android.lab.domain.dto.ProductInListDomainDTO
+import javax.inject.Inject
 
-class EntityMapper {
+class EntityMapper @Inject constructor(){
     fun toDbEntity(product: ProductInListDomainDTO): ProductInListEntity {
         return ProductInListEntity(
             guid = product.guid,

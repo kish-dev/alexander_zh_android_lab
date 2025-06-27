@@ -1,9 +1,9 @@
 package alex.android.lab.presentation.view
 
+import DaggerCartComponent
 import alex.android.lab.R
 import alex.android.lab.app.App
 import alex.android.lab.databinding.FragmentCartBinding
-import alex.android.lab.di.ViewModelFactory
 import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.presentation.customView.CartButtonView
 import alex.android.lab.presentation.viewModel.CartViewModel

@@ -3,8 +3,9 @@ package alex.android.lab.presentation.mappers
 import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.domain.dto.ProductInListDomainDTO
 import alex.android.lab.presentation.viewObject.ProductInListVO
+import javax.inject.Inject
 
-class ProductListMapper {
+class ProductListMapper @Inject constructor(){
     fun toVO(products: ProductInListDomainDTO) : ProductInListVO {
         return ProductInListVO(
             guid = products.guid,
