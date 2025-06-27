@@ -2,8 +2,9 @@ package alex.android.lab.data.mappers
 
 import alex.android.lab.data.dto.ProductInListDTO
 import alex.android.lab.domain.dto.ProductInListDomainDTO
+import javax.inject.Inject
 
-class ProductListMapperDTO {
+class ProductListMapperDTO @Inject constructor(){
     fun toDomainDTO(products: ProductInListDTO) : ProductInListDomainDTO {
         return ProductInListDomainDTO(
             guid = products.guid,

@@ -1,8 +1,9 @@
 package alex.android.lab.domain.interactors.cart
 
 import alex.android.lab.domain.repositories.cart.CartRepository
+import javax.inject.Inject
 
-class CartInteractorImpl(
+class CartInteractorImpl @Inject constructor(
     private val cartRepository: CartRepository
 ): CartInteractor {
 

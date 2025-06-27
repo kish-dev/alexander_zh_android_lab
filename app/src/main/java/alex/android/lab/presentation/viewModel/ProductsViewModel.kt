@@ -12,8 +12,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProductsViewModel(
+class ProductsViewModel @Inject constructor(
     private val productsInteractor: ProductsInteractor,
     private val cartInteractor: CartInteractor,
     private val productListMapper: ProductListMapper

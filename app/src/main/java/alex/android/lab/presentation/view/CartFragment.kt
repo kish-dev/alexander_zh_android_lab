@@ -1,27 +1,41 @@
 package alex.android.lab.presentation.view
 
+import DaggerCartComponent
 import alex.android.lab.R
+import alex.android.lab.app.App
 import alex.android.lab.databinding.FragmentCartBinding
 import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.presentation.customView.CartButtonView
 import alex.android.lab.presentation.viewModel.CartViewModel
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class CartFragment(): Fragment() {
 
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-    private val vm: CartViewModel by viewModel()
-
     private lateinit var cartButtonView: CartButtonView
     private lateinit var homeButton: View
+
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val vm: CartViewModel by viewModels { viewModelFactory }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        DaggerCartComponent.builder()
+            .appComponent((requireActivity().application as App).getAppComponent())
+            .build()
+            .inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

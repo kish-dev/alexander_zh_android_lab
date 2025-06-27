@@ -7,15 +7,15 @@ import alex.android.lab.data.mappers.ProductListMapperDTO
 import alex.android.lab.domain.ApiResult.ApiResult
 import alex.android.lab.domain.dto.ProductInListDomainDTO
 import alex.android.lab.domain.repositories.ProductsRepository
-import org.koin.core.component.KoinComponent
+import javax.inject.Inject
 
 
-class ProductsRepositoryImpl (
+class ProductsRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val productListMapper: ProductListMapperDTO,
     private val entityMapper: EntityMapper,
     private val dao: Dao
-): ProductsRepository, KoinComponent {
+): ProductsRepository {
 
     override suspend fun getProductsDB(): ApiResult<List<ProductInListDomainDTO>> {
         return ApiResult.Success(dao.getProducts().map { entityMapper.toDomainDTO(it) })

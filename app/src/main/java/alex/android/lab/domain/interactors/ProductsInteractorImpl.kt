@@ -4,8 +4,9 @@ import alex.android.lab.domain.UiStates.UIStates
 import alex.android.lab.domain.UiStates.UIStatesMapper.UIStatesMapper
 import alex.android.lab.domain.dto.ProductInListDomainDTO
 import alex.android.lab.domain.repositories.ProductsRepository
+import javax.inject.Inject
 
-class ProductsInteractorImpl(
+class ProductsInteractorImpl @Inject constructor(
     private val productsRepository: ProductsRepository,
     private val uiStatesMapper: UIStatesMapper
 ): ProductsInteractor{

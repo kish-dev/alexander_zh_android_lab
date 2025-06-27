@@ -1,9 +1,12 @@
 package alex.android.lab.presentation.view
 
 import alex.android.lab.R
+import alex.android.lab.app.App
 import alex.android.lab.databinding.PdpFragmentBinding
+import alex.android.lab.di.featureComponents.DaggerPdpComponent
 import alex.android.lab.presentation.customView.CartButtonView
 import alex.android.lab.presentation.viewModel.PdpViewModel
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,15 +14,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class PdpFragment : Fragment() {
     private var _binding: PdpFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private val vm: PdpViewModel by viewModel<PdpViewModel>()
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val vm: PdpViewModel by viewModels { viewModelFactory }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        DaggerPdpComponent.builder()
+            .appComponent((requireActivity().application as App).getAppComponent())
+            .build()
+            .inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
