@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="testRunner" value="CHOOSE_PER_TEST" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/commonUi" />
+            <option value="$PROJECT_DIR$/core/database-api" />
+            <option value="$PROJECT_DIR$/core/database-impl" />
+            <option value="$PROJECT_DIR$/core/network-api" />
+            <option value="$PROJECT_DIR$/core/network-impl" />
+            <option value="$PROJECT_DIR$/di" />
+            <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/cartScreen-api" />
+            <option value="$PROJECT_DIR$/feature/cartScreen-impl" />
+            <option value="$PROJECT_DIR$/feature/pdpProductScreen-api" />
+            <option value="$PROJECT_DIR$/feature/pdpProductScreen-impl" />
+            <option value="$PROJECT_DIR$/feature/productsListScreen-api" />
+            <option value="$PROJECT_DIR$/feature/productsListScreen-impl" />
+            <option value="$PROJECT_DIR$/navigation-api" />
+            <option value="$PROJECT_DIR$/navigation-impl" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
