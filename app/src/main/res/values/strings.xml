@@ -1,4 +1,3 @@
 <resources>
-    <string name="app_name">alexAndroidLab</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name">multimodule</string>
 </resources>
